@@ -20,13 +20,29 @@
 > 추후 백엔드 API + 프론트엔드를 직접 제작하여 완전히 대체할 예정입니다.
 
 ---
+## 🏗️ 인프라 구조
 
-##  인프라 구조
-
-인터넷 ↓ Cloudflare (DDoS 보호 + SSL + IP 숨김) ↓ 공유기 포트포워딩 (443) ↓ Nginx Proxy Manager (리버스 프록시) ↓ ┌─────────────────────────────────────────────┐ │ VM1 - Ubuntu Server (192.168.0.175) │ │ ├── mhcloud-portal (port 3000) ✅ │ │ ├── mhcloud-code (port 8443) ✅ │ │ ├── nextcloud (port 8080) ✅ │ │ └── nginx-proxy-manager (port 81) ✅ │ ├─────────────────────────────────────────────┤ │ VM2 - AI Server (192.168.0.116) │ │ ├── mhcloud-ollama (port 11434) ✅ │ │ └── mhcloud-ai (port 3000) ✅ │ └─────────────────────────────────────────────┘
+    인터넷
+       ↓
+    Cloudflare (DDoS 보호 + SSL + IP 숨김)
+       ↓
+    공유기 포트포워딩 (443)
+       ↓
+    Nginx Proxy Manager (리버스 프록시)
+       ↓
+    VM1 - Ubuntu Server (192.168.0.175)
+    ├── mhcloud-portal    (port 3000)  ✅
+    ├── mhcloud-code      (port 8443)  ✅
+    ├── nextcloud         (port 8080)  ✅ 임시
+    └── nginx-proxy-manager (port 81) ✅
+    
+    VM2 - AI Server (192.168.0.116)
+    ├── mhcloud-ollama    (port 11434) ✅ 임시
+    └── mhcloud-ai        (port 3000)  ✅ 임시
 
 **물리 서버:** Proxmox VE  
-**하드웨어:** RTX 2060 Super (8GB VRAM) · DDR4 16GB RAM
+**하드웨어:** AMD Ryzen 5 3600 (6C/12T) · DDR4 16GB RAM · RTX 2060 Super (8GB VRAM)
+
 
 ---
 
@@ -56,8 +72,21 @@
 ---
 
 ##  프로젝트 구조
-myhomecloud/ ├── frontend/ # 포털 UI (직접 제작 ✅) │ ├── index.html │ ├── style.css │ └── script.js ├── backend/ # API 서버 (개발 예정 🔨) │ └── (FastAPI 백엔드) ├── docker/ │ ├── portal/ │ │ └── docker-compose.yml # 포털 컨테이너 ✅ │ ├── code-server/ │ │ └── docker-compose.yml # Code-Server 컨테이너 ✅ │ └── ai/ │ └── docker-compose.yml # Ollama + Open WebUI ✅ └── README.md
 
+    myhomecloud/
+    ├── frontend/                    # 포털 UI (직접 제작 ✅)
+    │   ├── index.html
+    │   ├── style.css
+    │   └── script.js
+    ├── backend/                     # API 서버 (개발 예정 🔨)
+    ├── docker/
+    │   ├── portal/
+    │   │   └── docker-compose.yml   # 포털 컨테이너 ✅
+    │   ├── code-server/
+    │   │   └── docker-compose.yml   # Code-Server ✅
+    │   └── ai/
+    │       └── docker-compose.yml   # Ollama + Open WebUI ✅
+    └── README.md
 ---
 
 ##  개발 로드맵
