@@ -36,7 +36,7 @@
     ├── nextcloud         (port 8080)  ✅ 임시
     └── nginx-proxy-manager (port 81) ✅
     
-    VM2 - AI Server (192.168.0.116)
+    VM2 - AI Server (192.168.0.117)
     ├── mhcloud-ollama    (port 11434) ✅ 임시
     └── mhcloud-ai        (port 3000)  ✅ 임시
 
@@ -119,7 +119,6 @@
 | Kubernetes (K3s) 도입 |
 | Flutter 모바일 앱 개발 |
 | SSO 통합 로그인 시스템 |
-| GPU 패스스루 (RTX 2060 Super) |
 | 사용자별 Code-Server (Replit 클론) |
 
 ---
