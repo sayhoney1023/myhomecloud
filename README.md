@@ -13,7 +13,7 @@
 |--------|--------|------|------|
 | ☁️ Cloud | [cloud.myhomecloud.kr](https://cloud.myhomecloud.kr) | ✅ Online | 파일 저장 · 공유 · 동기화 |
 | 💻 Code | [code.myhomecloud.kr](https://code.myhomecloud.kr) | ✅ Online | 브라우저 기반 VS Code |
-| 🤖 AI | [ai.myhomecloud.kr](https://ai.myhomecloud.kr) | ✅ Online | 로컬 AI 챗봇 (Ollama) |
+| 🤖 AI | [ai.myhomecloud.kr](https://ai.myhomecloud.kr) | ✅ Online | 로컬 AI 챗봇 (DeepSeek-R1) |
 
 >  **임시 운영 중인 서비스**  
 > Cloud(Nextcloud), AI(Open WebUI)는 오픈소스를 임시로 사용 중입니다.  
@@ -145,8 +145,22 @@
 | nextcloud_app_1 | nextcloud | VM1 | 8080 | ✅ (임시) |
 | nginx-proxy-manager | jc21/nginx-proxy-manager | VM1 | 80/81/443 | ✅ |
 | nextcloud_db_1 | mariadb | VM1 | 3306 | ✅ |
-| mhcloud-ollama | ollama/ollama | VM2 | 11434 | ✅ (임시) |
-| mhcloud-ai | open-webui | VM2 | 3000 | ✅ (임시) |
+| mhcloud-ollama | ollama/ollama | VM2 | 11434 | ✅ |
+| mhcloud-ai | open-webui | VM2 | 3000 | ✅ |
+| mhcloud-ollama | ollama/ollama | VM2 | 11434 | ✅ GPU |
+| mhcloud-searxng | searxng/searxng | VM2 | 8081 | ✅ |
+
+---
+
+### 2026-03-17
+- ✅ GPU 패스스루 완료 (RTX 2060 Super)
+- ✅ Ubuntu 24.04 UEFI 재설치
+- ✅ NVIDIA Driver 580 + CUDA 13.0
+- ✅ Docker + NVIDIA Container Toolkit
+- ✅ Ollama GPU 모드 실행
+- ✅ DeepSeek-R1:8b 모델 설치
+- ✅ SearXNG 웹 검색 연동
+- ✅ MH Cloud AI 이름 설정
 
 ---
 

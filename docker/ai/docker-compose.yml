@@ -25,4 +25,3 @@ services:
     ports:
       - "3000:8080"
     restart: unless-stopped
-    
