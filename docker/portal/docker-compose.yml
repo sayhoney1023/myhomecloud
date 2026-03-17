@@ -1,0 +1,9 @@
+services:
+  portal:
+    image: nginx:alpine
+    container_name: mhcloud-portal
+    volumes:
+      - ../../frontend:/usr/share/nginx/html:ro
+    ports:
+      - "3000:80"
+    restart: unless-stopped
