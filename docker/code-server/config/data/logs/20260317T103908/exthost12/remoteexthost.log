@@ -1,0 +1,17 @@
+2026-03-17 13:47:04.177 [info] Extension host with pid 71886 started
+2026-03-17 13:47:04.196 [info] Lock '/config/data/User/workspaceStorage/527ed0a5/vscode.lock': Lock acquired.
+2026-03-17 13:47:04.482 [info] ExtensionService#_doActivateExtension vscode.github-authentication, startup: false, activationEvent: 'onAuthenticationRequest:github'
+2026-03-17 13:47:04.483 [info] ExtensionService#_doActivateExtension vscode.emmet, startup: false, activationEvent: 'onLanguage'
+2026-03-17 13:47:04.483 [info] ExtensionService#_doActivateExtension vscode.extension-editing, startup: false, activationEvent: 'onLanguage:markdown'
+2026-03-17 13:47:04.484 [info] ExtensionService#_doActivateExtension vscode.markdown-language-features, startup: false, activationEvent: 'onLanguage:markdown'
+2026-03-17 13:47:05.122 [info] ExtensionService#_doActivateExtension vscode.git-base, startup: true, activationEvent: '*', root cause: vscode.git
+2026-03-17 13:47:05.302 [info] ExtensionService#_doActivateExtension vscode.git, startup: true, activationEvent: '*'
+2026-03-17 13:47:05.302 [info] ExtensionService#_doActivateExtension vscode.github, startup: true, activationEvent: '*'
+2026-03-17 13:47:05.491 [info] ExtensionService#_doActivateExtension vscode.markdown-math, startup: false, activationEvent: 'api', root cause: vscode.markdown-language-features
+2026-03-17 13:47:05.839 [info] Eager extensions activated
+2026-03-17 13:47:05.839 [info] ExtensionService#_doActivateExtension vscode.debug-auto-launch, startup: false, activationEvent: 'onStartupFinished'
+2026-03-17 13:47:05.845 [info] ExtensionService#_doActivateExtension vscode.merge-conflict, startup: false, activationEvent: 'onStartupFinished'
+2026-03-17 13:47:08.163 [info] ExtensionService#_doActivateExtension vscode.terminal-suggest, startup: false, activationEvent: 'onTerminalShellIntegration:*'
+2026-03-17 14:55:59.890 [info] Extension host terminating: renderer disconnected for too long (2)
+2026-03-17 14:55:59.890 [info] Lock '/config/data/User/workspaceStorage/527ed0a5/vscode.lock': Marking the lockfile as scheduled to be released in 6000 ms.
+2026-03-17 14:55:59.912 [info] Extension host with pid 71886 exiting with code 0

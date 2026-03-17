@@ -1,0 +1,27 @@
+2026-03-17 13:51:30.379 [info] Extension host with pid 97688 started
+2026-03-17 13:51:30.379 [error] Error: EEXIST: file already exists, open '/config/data/User/workspaceStorage/527ed0a5/vscode.lock'
+2026-03-17 13:51:30.381 [info] Lock '/config/data/User/workspaceStorage/527ed0a5/vscode.lock': Could not acquire lock, checking if the file is stale.
+2026-03-17 13:51:30.382 [info] Lock '/config/data/User/workspaceStorage/527ed0a5/vscode.lock': The lock does not look stale, elapsed: 14 ms, giving up.
+2026-03-17 13:51:30.396 [error] Error: EEXIST: file already exists, open '/config/data/User/workspaceStorage/527ed0a5-1/vscode.lock'
+2026-03-17 13:51:30.396 [info] Lock '/config/data/User/workspaceStorage/527ed0a5-1/vscode.lock': Could not acquire lock, checking if the file is stale.
+2026-03-17 13:51:30.396 [info] Lock '/config/data/User/workspaceStorage/527ed0a5-1/vscode.lock': The lock does not look stale, elapsed: 343 ms, giving up.
+2026-03-17 13:51:30.415 [info] Lock '/config/data/User/workspaceStorage/527ed0a5-2/vscode.lock': Lock acquired.
+2026-03-17 13:51:30.564 [info] ExtensionService#_doActivateExtension vscode.github-authentication, startup: false, activationEvent: 'onAuthenticationRequest:github'
+2026-03-17 13:51:30.572 [info] ExtensionService#_doActivateExtension vscode.emmet, startup: false, activationEvent: 'onLanguage'
+2026-03-17 13:51:30.764 [info] ExtensionService#_doActivateExtension vscode.git-base, startup: true, activationEvent: '*'
+2026-03-17 13:51:30.866 [info] ExtensionService#_doActivateExtension vscode.github, startup: true, activationEvent: '*'
+2026-03-17 13:51:30.968 [info] Eager extensions activated
+2026-03-17 13:51:30.968 [info] ExtensionService#_doActivateExtension vscode.debug-auto-launch, startup: false, activationEvent: 'onStartupFinished'
+2026-03-17 13:51:30.969 [info] ExtensionService#_doActivateExtension vscode.merge-conflict, startup: false, activationEvent: 'onStartupFinished'
+2026-03-17 13:51:34.630 [info] ExtensionService#_doActivateExtension vscode.git, startup: false, activationEvent: 'api', root cause: vscode.github
+2026-03-17 13:51:46.175 [info] ExtensionService#_doActivateExtension vscode.html-language-features, startup: false, activationEvent: 'onLanguage:html'
+2026-03-17 13:51:47.091 [info] ExtensionService#_doActivateExtension vscode.typescript-language-features, startup: false, activationEvent: 'onLanguage:javascript'
+2026-03-17 13:51:47.728 [info] ExtensionService#_doActivateExtension vscode.css-language-features, startup: false, activationEvent: 'onLanguage:css'
+2026-03-17 13:53:43.188 [info] Extension host terminating: received terminate message from renderer
+2026-03-17 13:53:43.188 [info] Lock '/config/data/User/workspaceStorage/527ed0a5-2/vscode.lock': Marking the lockfile as scheduled to be released in 6000 ms.
+2026-03-17 13:53:43.217 [error] [vscode.html-language-features] provider FAILED
+2026-03-17 13:53:43.217 [error] Error: Starting server failed
+	at Ub.$start (/app/code-server/lib/vscode/extensions/html-language-features/client/dist/node/htmlClientMain.js:16:10999)
+	at async Ub.sendRequest (/app/code-server/lib/vscode/extensions/html-language-features/client/dist/node/htmlClientMain.js:12:136634)
+	at async L4.provideColors (file:///app/code-server/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:143:172765)
+2026-03-17 13:53:43.222 [info] Extension host with pid 97688 exiting with code 0

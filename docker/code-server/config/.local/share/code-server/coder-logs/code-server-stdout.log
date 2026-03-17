@@ -1,0 +1,195 @@
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+[2026-03-17T01:35:15.752Z] info  code-server 4.111.0 24ea70ac88a8a84d991d6ac7608f7fe5538c842a
+[2026-03-17T01:35:15.753Z] info  Using user-data-dir /config/data
+[2026-03-17T01:35:15.761Z] info  Using config file /config/.config/code-server/config.yaml
+[2026-03-17T01:35:15.761Z] info  HTTP server listening on http://0.0.0.0:8443/
+[2026-03-17T01:35:15.761Z] info    - Authentication is enabled
+[2026-03-17T01:35:15.761Z] info      - Using password from $PASSWORD
+[2026-03-17T01:35:15.761Z] info    - Not serving HTTPS
+[2026-03-17T01:35:15.761Z] info  Session server listening on /config/data/code-server-ipc.sock
+[10:39:08] 
+
+
+
+
+[reconnection-grace-time] No CLI argument provided, using default: 10800000ms (10800s)
+[10:39:08] Extension host agent started.
+[10:39:08] Started initializing default profile extensions in extensions installation folder. file:///config/extensions
+[10:39:08] Completed initializing default profile extensions in extensions installation folder. file:///config/extensions
+[10:39:18] [172.20.0.1][5442db06][ManagementConnection] New connection established.
+[10:39:21] [172.20.0.1][11d43840][ExtensionHostConnection] New connection established.
+[10:39:21] [172.20.0.1][11d43840][ExtensionHostConnection] <1327> Launched Extension Host Process.
+[10:39:22] [172.20.0.1][11d43840][ExtensionHostConnection] <1327> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[10:42:19] [172.20.0.1][3cdd50c0][ManagementConnection] New connection established.
+[10:42:20] [172.20.0.1][a7186cde][ExtensionHostConnection] New connection established.
+[10:42:20] [172.20.0.1][a7186cde][ExtensionHostConnection] <3168> Launched Extension Host Process.
+[10:42:20] [172.20.0.1][a7186cde][ExtensionHostConnection] <3168> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[10:47:44] [172.20.0.1][3cdd50c0][ManagementConnection] The client has disconnected, will wait for reconnection 3h before disposing...
+[10:47:59] [172.20.0.1][3cdd50c0][ManagementConnection] Another client has connected, will shorten the wait for reconnection 5m before disposing...
+[10:47:59] [172.20.0.1][4c6f29fb][ManagementConnection] New connection established.
+[10:48:02] [172.20.0.1][b9dcf6ac][ExtensionHostConnection] New connection established.
+[10:48:02] [172.20.0.1][b9dcf6ac][ExtensionHostConnection] <6298> Launched Extension Host Process.
+[10:48:02] [172.20.0.1][b9dcf6ac][ExtensionHostConnection] <6298> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[10:48:06] [172.20.0.1][4c6f29fb][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[10:48:06] [172.20.0.1][b9dcf6ac][ExtensionHostConnection] <6298> Extension Host Process exited with code: 0, signal: null.
+[10:50:06] [172.20.0.1][5442db06][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[10:50:06] [172.20.0.1][11d43840][ExtensionHostConnection] <1327> Extension Host Process exited with code: 0, signal: null.
+[10:50:08] [172.20.0.1][bf97738a][ManagementConnection] New connection established.
+[10:50:11] [172.20.0.1][ec69fd83][ManagementConnection] New connection established.
+[10:50:14] [172.20.0.1][a32dd7bb][ExtensionHostConnection] New connection established.
+[10:50:14] [172.20.0.1][a32dd7bb][ExtensionHostConnection] <7484> Launched Extension Host Process.
+[10:50:15] [172.20.0.1][a32dd7bb][ExtensionHostConnection] <7484> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[10:50:39] [172.20.0.1][bf97738a][ManagementConnection] The client has disconnected, will wait for reconnection 3h before disposing...
+[10:52:59] [172.20.0.1][3cdd50c0][ManagementConnection] The reconnection short grace time of 5m has expired, so the connection will be disposed.
+[10:52:59] [172.20.0.1][a7186cde][ExtensionHostConnection] <3168> Extension Host Process exited with code: 0, signal: null.
+[10:53:20] [172.20.0.1][bf97738a][ManagementConnection] Another client has connected, will shorten the wait for reconnection 5m before disposing...
+[10:53:20] [172.20.0.1][2dd4ee2c][ManagementConnection] New connection established.
+[10:53:22] [172.20.0.1][2dd4ee2c][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[10:58:20] [172.20.0.1][bf97738a][ManagementConnection] The reconnection short grace time of 5m has expired, so the connection will be disposed.
+[10:58:51] [172.20.0.1][ec69fd83][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[10:58:51] [172.20.0.1][a32dd7bb][ExtensionHostConnection] <7484> Extension Host Process exited with code: 0, signal: null.
+[10:59:00] [172.20.0.1][3aaa966e][ManagementConnection] New connection established.
+[10:59:00] [172.20.0.1][c9df4c23][ExtensionHostConnection] New connection established.
+[10:59:00] [172.20.0.1][c9df4c23][ExtensionHostConnection] <11441> Launched Extension Host Process.
+[10:59:01] [172.20.0.1][c9df4c23][ExtensionHostConnection] <11441> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[11:02:42] [172.20.0.1][3aaa966e][ManagementConnection] The client has disconnected, will wait for reconnection 3h before disposing...
+[11:12:05] [172.20.0.1][3aaa966e][ManagementConnection] Another client has connected, will shorten the wait for reconnection 5m before disposing...
+[11:12:05] [172.20.0.1][bec5f9b5][ManagementConnection] New connection established.
+[11:12:08] [172.20.0.1][2add7cac][ExtensionHostConnection] New connection established.
+[11:12:08] [172.20.0.1][2add7cac][ExtensionHostConnection] <21851> Launched Extension Host Process.
+[11:12:09] [172.20.0.1][2add7cac][ExtensionHostConnection] <21851> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[11:17:06] [172.20.0.1][3aaa966e][ManagementConnection] The reconnection short grace time of 5m has expired, so the connection will be disposed.
+[11:17:06] [172.20.0.1][c9df4c23][ExtensionHostConnection] <11441> Extension Host Process exited with code: 0, signal: null.
+[11:24:22] [172.20.0.1][bec5f9b5][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[11:24:22] [172.20.0.1][2add7cac][ExtensionHostConnection] <21851> Extension Host Process exited with code: 0, signal: null.
+[11:50:09] [172.20.0.1][3a69367f][ManagementConnection] New connection established.
+[11:50:10] [172.20.0.1][fac867e2][ExtensionHostConnection] New connection established.
+[11:50:10] [172.20.0.1][fac867e2][ExtensionHostConnection] <25903> Launched Extension Host Process.
+[11:50:10] [172.20.0.1][fac867e2][ExtensionHostConnection] <25903> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[11:51:06] [172.20.0.1][3a69367f][ManagementConnection] The client has disconnected, will wait for reconnection 3h before disposing...
+[13:39:16] [172.20.0.1][3a69367f][ManagementConnection] Another client has connected, will shorten the wait for reconnection 5m before disposing...
+[13:39:16] [172.20.0.1][fac867e2][ExtensionHostConnection] The client has reconnected.
+[13:39:17] [172.20.0.1][3a69367f][ManagementConnection] The client has reconnected.
+[13:39:55] [172.20.0.1][72b3a707][ManagementConnection] New connection established.
+[13:39:56] [172.20.0.1][1fdca903][ExtensionHostConnection] New connection established.
+[13:39:56] [172.20.0.1][1fdca903][ExtensionHostConnection] <53740> Launched Extension Host Process.
+[13:39:57] [172.20.0.1][1fdca903][ExtensionHostConnection] <53740> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[13:46:53] [172.20.0.1][9428e148][ManagementConnection] New connection established.
+[13:46:54] [172.20.0.1][98c5cb41][ExtensionHostConnection] New connection established.
+[13:46:54] [172.20.0.1][98c5cb41][ExtensionHostConnection] <64040> Launched Extension Host Process.
+[13:46:54] [172.20.0.1][98c5cb41][ExtensionHostConnection] <64040> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[13:47:01] [172.20.0.1][3a69367f][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[13:47:01] [172.20.0.1][fac867e2][ExtensionHostConnection] <25903> Extension Host Process exited with code: 0, signal: null.
+[13:47:02] [172.20.0.1][83eb195b][ManagementConnection] New connection established.
+[13:47:03] [172.20.0.1][9d10d0aa][ExtensionHostConnection] New connection established.
+[13:47:03] [172.20.0.1][9d10d0aa][ExtensionHostConnection] <71886> Launched Extension Host Process.
+[13:47:03] [172.20.0.1][9d10d0aa][ExtensionHostConnection] <71886> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[13:47:05] [172.20.0.1][98c5cb41][ExtensionHostConnection] <64040> Extension Host Process exited with code: 0, signal: null.
+[13:47:06] [172.20.0.1][9428e148][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[13:48:41] [172.20.0.1][72b3a707][ManagementConnection] The client has reconnected.
+[13:48:41] [172.20.0.1][1fdca903][ExtensionHostConnection] The client has reconnected.
+[13:48:59] [172.20.0.1][0340e393][ManagementConnection] New connection established.
+[13:49:00] [172.20.0.1][49069436][ExtensionHostConnection] New connection established.
+[13:49:00] [172.20.0.1][49069436][ExtensionHostConnection] <80436> Launched Extension Host Process.
+[13:49:00] [172.20.0.1][49069436][ExtensionHostConnection] <80436> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[13:49:03] [172.20.0.1][83eb195b][ManagementConnection] The client has reconnected.
+[13:49:04] [172.20.0.1][9d10d0aa][ExtensionHostConnection] The client has reconnected.
+[13:49:06] [172.20.0.1][49069436][ExtensionHostConnection] <80436> Extension Host Process exited with code: 0, signal: null.
+[13:49:07] [172.20.0.1][0340e393][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[13:49:21] [172.20.0.1][0b0f3c57][ManagementConnection] New connection established.
+[13:49:22] [172.20.0.1][e6fce873][ExtensionHostConnection] New connection established.
+[13:49:22] [172.20.0.1][e6fce873][ExtensionHostConnection] <87799> Launched Extension Host Process.
+[13:49:22] [172.20.0.1][e6fce873][ExtensionHostConnection] <87799> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[13:50:09] [172.20.0.1][0b0f3c57][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[13:50:09] [172.20.0.1][e6fce873][ExtensionHostConnection] <87799> Extension Host Process exited with code: 0, signal: null.
+[13:51:27] [172.20.0.1][973f053e][ManagementConnection] New connection established.
+[13:51:29] [172.20.0.1][f7884d00][ExtensionHostConnection] New connection established.
+[13:51:29] [172.20.0.1][f7884d00][ExtensionHostConnection] <97688> Launched Extension Host Process.
+[13:51:29] [172.20.0.1][f7884d00][ExtensionHostConnection] <97688> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[13:52:58] [172.20.0.1][1fdca903][ExtensionHostConnection] The client has reconnected.
+[13:52:59] [172.20.0.1][72b3a707][ManagementConnection] The client has reconnected.
+[13:53:43] [172.20.0.1][973f053e][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[13:53:43] [172.20.0.1][f7884d00][ExtensionHostConnection] <97688> Extension Host Process exited with code: 0, signal: null.
+[13:57:48] [172.20.0.1][83eb195b][ManagementConnection] The client has disconnected, will wait for reconnection 3h before disposing...
+[14:00:12] [172.20.0.1][72b3a707][ManagementConnection] The client has disconnected, will wait for reconnection 3h before disposing...
+[14:50:59] [172.20.0.1][72b3a707][ManagementConnection] Another client has connected, will shorten the wait for reconnection 5m before disposing...
+[14:50:59] [172.20.0.1][83eb195b][ManagementConnection] Another client has connected, will shorten the wait for reconnection 5m before disposing...
+[14:50:59] [172.20.0.1][a696d76a][ManagementConnection] New connection established.
+[14:51:01] [172.20.0.1][f0605809][ExtensionHostConnection] New connection established.
+[14:51:01] [172.20.0.1][f0605809][ExtensionHostConnection] <122487> Launched Extension Host Process.
+[14:51:01] [172.20.0.1][f0605809][ExtensionHostConnection] <122487> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[14:55:59] [172.20.0.1][72b3a707][ManagementConnection] The reconnection short grace time of 5m has expired, so the connection will be disposed.
+[14:55:59] [172.20.0.1][83eb195b][ManagementConnection] The reconnection short grace time of 5m has expired, so the connection will be disposed.
+[14:55:59] [172.20.0.1][1fdca903][ExtensionHostConnection] <53740> Extension Host Process exited with code: 0, signal: null.
+[14:55:59] [172.20.0.1][9d10d0aa][ExtensionHostConnection] <71886> Extension Host Process exited with code: 0, signal: null.
+[14:59:07] [172.20.0.1][9d2a1574][ManagementConnection] New connection established.
+[14:59:09] [172.20.0.1][d4a05054][ExtensionHostConnection] New connection established.
+[14:59:09] [172.20.0.1][d4a05054][ExtensionHostConnection] <128980> Launched Extension Host Process.
+[14:59:10] [172.20.0.1][d4a05054][ExtensionHostConnection] <128980> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[14:59:16] [172.20.0.1][9d2a1574][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[14:59:16] [172.20.0.1][d4a05054][ExtensionHostConnection] <128980> Extension Host Process exited with code: 0, signal: null.
+[15:08:03] [172.20.0.1][a696d76a][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[15:08:03] [172.20.0.1][f0605809][ExtensionHostConnection] <122487> Extension Host Process exited with code: 0, signal: null.
+[15:08:05] [172.20.0.1][10aa931a][ManagementConnection] New connection established.
+[15:08:07] [172.20.0.1][a667d8bb][ExtensionHostConnection] New connection established.
+[15:08:07] [172.20.0.1][a667d8bb][ExtensionHostConnection] <130995> Launched Extension Host Process.
+[15:08:07] [172.20.0.1][a667d8bb][ExtensionHostConnection] <130995> [reconnection-grace-time] Extension host: read VSCODE_RECONNECTION_GRACE_TIME=10800000ms (10800s)
+
+[15:10:09] [172.20.0.1][10aa931a][ManagementConnection] The client has disconnected gracefully, so the connection will be disposed.
+[15:10:09] [172.20.0.1][a667d8bb][ExtensionHostConnection] <130995> Extension Host Process exited with code: 0, signal: null.
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+[2026-03-17T10:10:31.795Z] info  code-server 4.111.0 24ea70ac88a8a84d991d6ac7608f7fe5538c842a
+[2026-03-17T10:10:31.799Z] info  Using user-data-dir /config/data
+[2026-03-17T10:10:31.816Z] info  Using config file /config/.config/code-server/config.yaml
+[2026-03-17T10:10:31.816Z] info  HTTP server listening on http://0.0.0.0:8443/
+[2026-03-17T10:10:31.816Z] info    - Authentication is enabled
+[2026-03-17T10:10:31.816Z] info      - Using password from $PASSWORD
+[2026-03-17T10:10:31.816Z] info    - Not serving HTTPS
+[2026-03-17T10:10:31.816Z] info  Session server listening on /config/data/code-server-ipc.sock
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+[2026-03-17T10:14:40.127Z] info  code-server 4.111.0 24ea70ac88a8a84d991d6ac7608f7fe5538c842a
+[2026-03-17T10:14:40.130Z] info  Using user-data-dir /config/data
+[2026-03-17T10:14:40.140Z] info  Using config file /config/.config/code-server/config.yaml
+[2026-03-17T10:14:40.141Z] info  HTTP server listening on http://0.0.0.0:8443/
+[2026-03-17T10:14:40.141Z] info    - Authentication is enabled
+[2026-03-17T10:14:40.141Z] info      - Using password from $PASSWORD
+[2026-03-17T10:14:40.141Z] info    - Not serving HTTPS
+[2026-03-17T10:14:40.141Z] info  Session server listening on /config/data/code-server-ipc.sock
+[19:25:47] 
+
+
+
+
+[reconnection-grace-time] No CLI argument provided, using default: 10800000ms (10800s)
+[19:25:47] Extension host agent started.
+🌐 i18next is maintained with support from Locize — consider powering your project with managed localization (AI, CDN, integrations): https://locize.com 💙
+[2026-03-17T11:02:13.303Z] info  code-server 4.111.0 24ea70ac88a8a84d991d6ac7608f7fe5538c842a
+[2026-03-17T11:02:13.307Z] info  Using user-data-dir /config/data
+[2026-03-17T11:02:13.317Z] info  Using config file /config/.config/code-server/config.yaml
+[2026-03-17T11:02:13.317Z] info  HTTP server listening on http://0.0.0.0:8443/
+[2026-03-17T11:02:13.317Z] info    - Authentication is enabled
+[2026-03-17T11:02:13.317Z] info      - Using password from $PASSWORD
+[2026-03-17T11:02:13.317Z] info    - Not serving HTTPS
+[2026-03-17T11:02:13.317Z] info  Session server listening on /config/data/code-server-ipc.sock
+[20:44:33] 
+
+
+
+
+[reconnection-grace-time] No CLI argument provided, using default: 10800000ms (10800s)
+[20:44:33] Extension host agent started.

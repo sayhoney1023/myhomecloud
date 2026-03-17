@@ -1,0 +1,5 @@
+2026-03-17 11:24:22.369 [error] Request textDocument/documentColor failed.
+Error: Starting server failed
+	at Ub.$start (/app/code-server/lib/vscode/extensions/html-language-features/client/dist/node/htmlClientMain.js:16:10999)
+	at async Ub.sendRequest (/app/code-server/lib/vscode/extensions/html-language-features/client/dist/node/htmlClientMain.js:12:136634)
+	at async L4.provideColors (file:///app/code-server/lib/vscode/out/vs/workbench/api/node/extensionHostProcess.js:143:172765)

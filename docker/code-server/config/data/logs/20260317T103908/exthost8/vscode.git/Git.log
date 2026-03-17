@@ -1,0 +1,56 @@
+2026-03-17 11:12:11.778 [info] [main] Log level: Info
+2026-03-17 11:12:11.778 [info] [main] Validating found git in: "git"
+2026-03-17 11:12:11.778 [info] [main] Using git "2.43.0" from "git"
+2026-03-17 11:12:11.778 [info] [Model][doInitialScan] Initial repository scan started
+2026-03-17 11:12:11.778 [info] > git rev-parse --show-toplevel [1ms]
+2026-03-17 11:12:11.778 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2026-03-17 11:12:11.778 [info] > git rev-parse --show-toplevel [0ms]
+2026-03-17 11:12:11.778 [info] > git rev-parse --git-dir --git-common-dir --show-superproject-working-tree [2ms]
+2026-03-17 11:12:11.808 [info] [Model][openRepository] Opened repository (path): /config/workspace/myhomecloud
+2026-03-17 11:12:11.808 [info] [Model][openRepository] Opened repository (real path): /config/workspace/myhomecloud
+2026-03-17 11:12:11.808 [info] [Model][openRepository] Opened repository (kind): repository
+2026-03-17 11:12:11.811 [info] [Model][doInitialScan] Initial repository scan completed - repositories (1), closed repositories (0), parent repositories (0), unsafe repositories (0)
+2026-03-17 11:12:11.816 [info] > git config --get commit.template [3ms]
+2026-03-17 11:12:11.817 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [2ms]
+2026-03-17 11:12:11.818 [warning] [Git][revParse] Unable to read file: ENOENT: no such file or directory, open '/config/workspace/myhomecloud/.git/refs/remotes/origin/main'
+2026-03-17 11:12:11.819 [info] > git rev-parse refs/remotes/origin/main [1ms]
+2026-03-17 11:12:11.823 [info] > git status -z -uall [2ms]
+2026-03-17 11:12:11.824 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [1ms]
+2026-03-17 11:12:11.841 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [3ms]
+2026-03-17 11:12:11.844 [info] > git config --get commit.template [2ms]
+2026-03-17 11:12:11.844 [info] > git config --get --local branch.main.vscode-merge-base [1ms]
+2026-03-17 11:12:11.847 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/origin/main refs/remotes/origin/main [1ms]
+2026-03-17 11:12:11.850 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/main refs/remotes/main [3ms]
+2026-03-17 11:12:11.850 [info] > git merge-base refs/heads/main refs/remotes/origin/main [1ms]
+2026-03-17 11:12:11.854 [warning] [Git][revParse] Unable to read file: ENOENT: no such file or directory, open '/config/workspace/myhomecloud/.git/refs/remotes/origin/main'
+2026-03-17 11:12:11.854 [info] > git diff --raw --numstat --diff-filter=ADMR -z --find-renames=50% 788206fa3d2f5e76e6c68a235bdb4a0482bfa12a...refs/remotes/origin/main -- [2ms]
+2026-03-17 11:12:11.854 [info] > git rev-parse refs/remotes/origin/main [0ms]
+2026-03-17 11:12:11.858 [info] > git status -z -uall [2ms]
+2026-03-17 11:12:11.858 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [1ms]
+2026-03-17 11:12:11.939 [info] > git rev-parse --show-toplevel [1ms]
+2026-03-17 11:12:11.939 [info] fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+2026-03-17 11:12:12.605 [info] > git check-ignore -v -z --stdin [1ms]
+2026-03-17 11:12:12.660 [info] > git check-ignore -v -z --stdin [0ms]
+2026-03-17 11:12:12.937 [info] > git show --textconv :frontend/index.html [1ms]
+2026-03-17 11:12:12.938 [info] > git ls-files --stage -- frontend/index.html [1ms]
+2026-03-17 11:12:12.940 [info] > git cat-file -s e0abff52196b796df6d563a96a0f6ce8d447a0dd [1ms]
+2026-03-17 11:13:19.159 [info] > git check-ignore -v -z --stdin [0ms]
+2026-03-17 11:13:19.465 [info] > git show --textconv :frontend/script.js [3ms]
+2026-03-17 11:13:19.465 [info] > git ls-files --stage -- frontend/script.js [1ms]
+2026-03-17 11:13:19.467 [info] > git cat-file -s c52bd1829b9d60838c7136d0092c110e6c4398bf [0ms]
+2026-03-17 11:13:20.307 [info] > git check-ignore -v -z --stdin [0ms]
+2026-03-17 11:13:20.586 [info] > git show --textconv :frontend/style.css [2ms]
+2026-03-17 11:13:20.586 [info] > git ls-files --stage -- frontend/style.css [0ms]
+2026-03-17 11:13:20.589 [info] > git cat-file -s b7d1df7f7dbb6853181bc5dd29d3fadf17640578 [1ms]
+2026-03-17 11:13:22.996 [info] > git check-ignore -v -z --stdin [1ms]
+2026-03-17 11:13:23.261 [info] > git check-ignore -v -z --stdin [1ms]
+2026-03-17 11:13:23.550 [info] > git show --textconv :docker/portal/docker-compose.yml [11ms]
+2026-03-17 11:13:23.550 [info] > git ls-files --stage -- docker/portal/docker-compose.yml [4ms]
+2026-03-17 11:13:23.557 [info] > git cat-file -s caf5d63d4ebfb1ff8712ca0915f8d18f103828e5 [3ms]
+2026-03-17 11:13:24.185 [info] > git blame --root --incremental 788206fa3d2f5e76e6c68a235bdb4a0482bfa12a -- docker/portal/docker-compose.yml [1ms]
+2026-03-17 11:13:36.555 [info] > git check-ignore -v -z --stdin [1ms]
+2026-03-17 11:13:36.831 [info] > git show --textconv :frontend/index.html [2ms]
+2026-03-17 11:13:36.831 [info] > git ls-files --stage -- frontend/index.html [0ms]
+2026-03-17 11:13:36.833 [info] > git cat-file -s e0abff52196b796df6d563a96a0f6ce8d447a0dd [1ms]
