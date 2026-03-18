@@ -1,3 +1,5 @@
 docker/ai/ollama_data/
 docker/ai/webui_data/
 docker/ai/searxng_data/
+docker/code-server/config/
+docker/code-server/config/
