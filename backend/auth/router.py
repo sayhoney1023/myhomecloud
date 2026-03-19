@@ -4,7 +4,7 @@ from auth.utils import hash_password, verify_password, create_access_token
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-# 임시 유저 저장소 (나중에 DB로 교체할 거예요)
+# 임시 유저 저장소 (나중에 DB로 교체할 예정)
 fake_db = {}
 
 class RegisterRequest(BaseModel):
@@ -33,4 +33,3 @@ def login(req: LoginRequest):
     
     token = create_access_token({"sub": req.username})
     return {"access_token": token, "token_type": "bearer"}
-    
