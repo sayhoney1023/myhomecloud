@@ -253,6 +253,9 @@ uvicorn main:app --reload
 - 개인 홈서버 직접 구축 · 풀스택 개발 학습 중
 - 목표: 모든 서비스를 직접 제작하는 완전 자체 호스팅 플랫폼
 
+## 블로그
+📝 [velog.io/@sayhoney1023](https://velog.io/@sayhoney1023)
+
 ---
 
 > 이 프로젝트는 학습 목적으로 진행되는 개인 홈서버 프로젝트입니다.  
