@@ -75,25 +75,46 @@
     </div>
 
     <!-- 로그인 모달 -->
-    <div class="modal-overlay" id="loginModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h2>Log In</h2>
-                <button class="modal-close" onclick="closeLogin()">✕</button>
+<div class="modal-overlay" id="loginModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="modal-title">Log In</h2>
+            <button class="modal-close" onclick="closeLogin()">✕</button>
+        </div>
+
+        <!-- 탭 -->
+        <div class="modal-tabs">
+            <button class="modal-tab active" id="tab-login" onclick="switchTab('login')">로그인</button>
+            <button class="modal-tab" id="tab-register" onclick="switchTab('register')">회원가입</button>
+        </div>
+
+        <!-- 로그인 폼 -->
+        <div class="modal-body" id="form-login">
+            <div class="input-group">
+                <label>아이디</label>
+                <input type="text" placeholder="아이디를 입력하세요" id="username">
             </div>
-            <div class="modal-body">
-                <div class="input-group">
-                    <label>아이디</label>
-                    <input type="text" placeholder="아이디를 입력하세요" id="username">
-                </div>
-                <div class="input-group">
-                    <label>비밀번호</label>
-                    <input type="password" placeholder="비밀번호를 입력하세요" id="password">
-                </div>
-                <button class="submit-btn" onclick="login()">로그인</button>
+            <div class="input-group">
+                <label>비밀번호</label>
+                <input type="password" placeholder="비밀번호를 입력하세요" id="password">
             </div>
+            <button class="submit-btn" onclick="login()">로그인</button>
+        </div>
+
+        <!-- 회원가입 폼 -->
+        <div class="modal-body" id="form-register" style="display:none">
+            <div class="input-group">
+                <label>아이디</label>
+                <input type="text" placeholder="아이디를 입력하세요" id="reg-username">
+            </div>
+            <div class="input-group">
+                <label>비밀번호</label>
+                <input type="password" placeholder="비밀번호를 입력하세요" id="reg-password">
+            </div>
+            <button class="submit-btn" onclick="register()">회원가입</button>
         </div>
     </div>
+</div>
 
     <script src="script.js"></script>
 </body>
