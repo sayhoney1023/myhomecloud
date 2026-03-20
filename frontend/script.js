@@ -161,9 +161,19 @@ async function login() {
 async function register() {
     const username = document.getElementById('reg-username').value;
     const password = document.getElementById('reg-password').value;
+    const passwordConfirm = document.getElementById('reg-password-confirm').value;
 
     if (!username || !password) {
         alert('아이디와 비밀번호를 입력해주세요');
+        return;
+    }
+    if (password !== passwordConfirm) {
+        alert('비밀번호가 일치하지 않습니다 ❌');
+        return;
+    }
+
+    if (password.length < 4) {
+        alert('비밀번호는 4자 이상이어야 합니다');
         return;
     }
 
