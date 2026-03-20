@@ -3,15 +3,20 @@
 > 개인 홈서버 기반 클라우드 포털 시스템  
 > Proxmox + Docker + Cloudflare 로 구축한 완전 자체 호스팅 서비스
 
-🌐 **[www.myhomecloud.kr](https://www.myhomecloud.kr)**
+🌐 **[www.myhomecloud.kr](https://www.myhomecloud.kr)**  
+⚙️ **[api.myhomecloud.kr](https://api.myhomecloud.kr)**
+
 ## 블로그
 📝 [velog.io/@sayhoney1023](https://velog.io/@sayhoney1023)
+
 ---
 
 ## 서비스 현황
 
 | 서비스 | 도메인 | 상태 | 설명 |
 |--------|--------|------|------|
+| 🌐 Portal | [www.myhomecloud.kr](https://www.myhomecloud.kr) | ✅ Online | 포털 (로그인 시스템 완성) |
+| ⚙️ API | [api.myhomecloud.kr](https://api.myhomecloud.kr) | ✅ Online | FastAPI 백엔드 (JWT 인증) |
 | ☁️ Cloud | [cloud.myhomecloud.kr](https://cloud.myhomecloud.kr) | ✅ Online | 파일 저장 · 공유 · 동기화 |
 | 💻 Code | [code.myhomecloud.kr](https://code.myhomecloud.kr) | ✅ Online | 브라우저 기반 VS Code |
 | 🤖 AI | [ai.myhomecloud.kr](https://ai.myhomecloud.kr) | ✅ Online | 로컬 AI 챗봇 (DeepSeek-R1:8b) |
@@ -34,8 +39,9 @@ Cloudflare (DDoS 보호 + SSL + IP 숨김)
 Nginx Proxy Manager (리버스 프록시)
    ↓
 VM1 - Ubuntu Server (192.168.0.175)  |  RAM 6GB
-├── mhcloud-portal    (port 3000)  ✅
-├── mhcloud-backend   (port 8000)  🔨 개발 중 (FastAPI)
+├── mhcloud-portal    (port 3000)  ✅ UI
+├── mhcloud-backend   (port 8000)  ✅ FastAPI + PostgreSQL
+├── mhcloud-postgres  (port 5432)  ✅ PostgreSQL DB
 ├── mhcloud-code      (port 8443)  ✅
 ├── nextcloud         (port 8080)  ✅ 임시
 └── nginx-proxy-manager (port 81) ✅
@@ -65,10 +71,11 @@ VM2 - AI Server (192.168.0.117)  |  RAM 8GB · RTX 2060 Super GPU
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
 
-### 백엔드 (직접 제작 🔨)
-![Python](https://img.shields.io/badge/Python_3.14-3776AB?style=flat-square&logo=python&logoColor=white)
+### 백엔드 (직접 제작 ✅)
+![Python](https://img.shields.io/badge/Python_3.11-3776AB?style=flat-square&logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-D71F00?style=flat-square&logo=sqlalchemy&logoColor=white)
 
 ### 임시 사용 (추후 직접 제작으로 대체 예정)
 ![Nextcloud](https://img.shields.io/badge/Nextcloud-0082C9?style=flat-square&logo=nextcloud&logoColor=white)
@@ -83,12 +90,12 @@ VM2 - AI Server (192.168.0.117)  |  RAM 8GB · RTX 2060 Super GPU
 
 ```
 myhomecloud/
-├── frontend/                    # 포털 UI (직접 제작 ✅)
-│   ├── index.html
-│   ├── style.css
-│   └── script.js
-├── backend/                     # FastAPI API 서버 (개발 중 🔨)
-│   ├── main.py                  # 앱 진입점
+├── frontend/                    # 포털 UI
+│   ├── index.html               # UI
+│   ├── style.css                # 스타일시트
+│   └── script.js                # JWT 인증 · 카드 잠금 · 자동 로그아웃
+├── backend/                     # FastAPI API 서버 ✅
+│   ├── main.py                  # 앱 진입점 · DB 테이블 자동 생성
 │   ├── auth/
 │   │   ├── __init__.py
 │   │   ├── router.py            # 로그인·회원가입 API ✅
@@ -96,10 +103,21 @@ myhomecloud/
 │   ├── core/
 │   │   ├── __init__.py
 │   │   └── config.py            # 환경 설정 ✅
+│   ├── database/
+│   │   ├── __init__.py
+│   │   └── database.py          # SQLAlchemy 엔진 · 세션 ✅
+│   ├── models/
+│   │   ├── __init__.py
+│   │   └── user.py              # User 테이블 모델 ✅
+│   ├── Dockerfile
 │   ├── venv/                    # Python 가상환경 (git 제외)
 │   └── requirements.txt
 ├── docker/
-│   ├── portal/docker-compose.yml
+│   ├── portal/
+│   │   ├── docker-compose.yml
+│   │   └── nginx.conf           # 캐시 방지 헤더
+│   ├── backend/
+│   │   └── docker-compose.yml   # backend + postgres 통합
 │   ├── code-server/docker-compose.yml
 │   └── ai/docker-compose.yml
 └── README.md
@@ -144,16 +162,33 @@ uvicorn main:app --reload
 |--------|----------|------|------|
 | GET | `/` | API 서버 상태 확인 | ✅ |
 | GET | `/health` | 헬스체크 | ✅ |
-| POST | `/auth/register` | 회원가입 | ✅ |
+| POST | `/auth/register` | 회원가입 (비밀번호 확인 포함) | ✅ |
 | POST | `/auth/login` | 로그인 (JWT 발급) | ✅ |
 
 ### 개발 예정
 | Method | Endpoint | 설명 |
 |--------|----------|------|
+| PUT | `/auth/password` | 비밀번호 변경 |
 | GET | `/files` | 파일 목록 조회 |
 | POST | `/files/upload` | 파일 업로드 |
 | DELETE | `/files/{id}` | 파일 삭제 |
+| GET | `/system/status` | 서버 상태 (CPU · RAM · 디스크) |
 | POST | `/ai/chat` | AI 채팅 (Ollama 연동) |
+
+---
+
+## 포털 기능
+
+### 로그인 전
+- 서비스 카드 🔒 잠금 표시
+- 로그인 · 회원가입 모달 (탭 전환)
+- 비밀번호 확인 기능
+
+### 로그인 후
+- 서비스 카드 언락 · 정상 클릭 가능
+- 헤더에 `username님 👋` 표시
+- 서버 상태 위젯 (저장공간 · AI 모델 · 활성 서비스)
+- JWT 토큰 1시간 만료 · 자동 로그아웃
 
 ---
 
@@ -173,14 +208,22 @@ uvicorn main:app --reload
 | 2026.03 | VM 메모리 재배분 (VM1 6GB · VM2 8GB) |
 | 2026.03 | FastAPI 개발 환경 세팅 · 첫 API 서버 실행 |
 | 2026.03 | JWT 회원가입 · 로그인 API 구현 (bcrypt 암호화) |
+| 2026.03 | PostgreSQL 연동 (SQLAlchemy ORM · fake_db 제거) |
+| 2026.03 | VM1 백엔드 Docker 배포 완료 |
+| 2026.03 | api.myhomecloud.kr 도메인 연결 |
+| 2026.03 | 포털 로그인 · 회원가입 API 연동 완료 |
+| 2026.03 | 회원가입 비밀번호 확인 기능 추가 |
+| 2026.03 | 카드 잠금 · 로그인 후 언락 |
+| 2026.03 | JWT 토큰 만료 자동 로그아웃 |
+| 2026.03 | 포털 UI 글래스모피즘 리디자인 |
 
 ### 🔨 진행 예정
 | 기간 | 내용 |
 |------|------|
-| 2026.04 | PostgreSQL DB 연동 (fake_db 교체) |
+| 2026.04 | 비밀번호 변경 API |
+| 2026.04 | 서버 상태 실시간 위젯 (CPU · RAM · 디스크) |
 | 2026.04 | 파일 업로드 · 다운로드 API |
-| 2026.05 | 포털 로그인 시스템 연동 |
-| 2026.06 | Cloud UI 직접 제작 (Nextcloud 대체) |
+| 2026.05 | Cloud UI 직접 제작 (Nextcloud 대체) |
 | 2026.06 | AI 채팅 UI 직접 제작 (Open WebUI 대체) |
 | 2026.07 | 전체 통합 · 버그 수정 · 포트폴리오 정리 |
 
@@ -203,6 +246,7 @@ uvicorn main:app --reload
 | 3 | Nginx Proxy Manager | 리버스 프록시 |
 | 4 | Proxmox VM 격리 | 가상화 보안 |
 | 5 | JWT + bcrypt | API 인증 · 비밀번호 암호화 ✅ |
+| 6 | CORS | 허용된 도메인만 API 접근 가능 ✅ |
 
 ---
 
@@ -211,7 +255,8 @@ uvicorn main:app --reload
 | 컨테이너 | 이미지 | VM | 포트 | 상태 |
 |----------|--------|-----|------|------|
 | mhcloud-portal | nginx:alpine | VM1 | 3000 | ✅ |
-| mhcloud-backend | python/fastapi | VM1 | 8000 | 🔨 개발 중 |
+| mhcloud-backend | python/fastapi | VM1 | 8000 | ✅ |
+| mhcloud-postgres | postgres:16 | VM1 | 5432 | ✅ |
 | mhcloud-code | linuxserver/code-server | VM1 | 8443 | ✅ |
 | nextcloud_app_1 | nextcloud | VM1 | 8080 | ✅ 임시 |
 | nginx-proxy-manager | jc21/nginx-proxy-manager | VM1 | 80/81/443 | ✅ |
@@ -223,6 +268,19 @@ uvicorn main:app --reload
 ---
 
 ## 변경 이력
+
+### 2026-03-20
+- ✅ PostgreSQL 연동 완료 (SQLAlchemy ORM · fake_db 완전 제거)
+- ✅ VM1 백엔드 Docker 배포 (Dockerfile · docker-compose)
+- ✅ api.myhomecloud.kr 도메인 연결
+- ✅ 포털 로그인 · 회원가입 실제 API 연동
+- ✅ 회원가입 비밀번호 확인 기능 추가
+- ✅ 서비스 카드 🔒 잠금 · 로그인 후 언락
+- ✅ JWT 토큰 만료 자동 로그아웃 (1시간)
+- ✅ 헤더 로그인 후 사용자 이름 표시
+- ✅ 포털 UI 리디자인
+- ✅ CORS 설정 (www.myhomecloud.kr 허용)
+- ✅ Nginx 캐시 방지 헤더 설정
 
 ### 2026-03-19
 - ✅ JWT 회원가입 · 로그인 API 구현
