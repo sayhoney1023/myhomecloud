@@ -19,14 +19,17 @@ function checkLoginStatus() {
         lockCards();
         loginBtn.textContent = 'Log In';
         loginBtn.onclick = openLogin;
+        hideStats();
         return;
     }
+
     if (token && username) {
         loginBtn.textContent = username + '님 👋';
         loginBtn.onclick = logout;
         unlockCards();
+        showStats();
 
-        // 만료 시간까지 남은 시간 계산해서 자동 로그아웃 예약
+        // 자동 로그아웃 예약
         const remaining = parseInt(expireTime) - Date.now();
         setTimeout(() => {
             localStorage.removeItem('token');
@@ -36,42 +39,61 @@ function checkLoginStatus() {
             checkLoginStatus();
         }, remaining);
 
-    }else {
+    } else {
         loginBtn.textContent = 'Log In';
         loginBtn.onclick = openLogin;
         lockCards();
-    
+        hideStats();
     }
+}
+
+// 서버 상태 위젯 표시
+function showStats() {
+    document.getElementById('serverStats').classList.add('visible');
+}
+
+// 서버 상태 위젯 숨기기
+function hideStats() {
+    document.getElementById('serverStats').classList.remove('visible');
 }
 
 // 카드 잠금
 function lockCards() {
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
+    const cards = [
+        { id: 'card-cloud', url: 'https://cloud.myhomecloud.kr' },
+        { id: 'card-code',  url: 'https://code.myhomecloud.kr' },
+        { id: 'card-ai',    url: 'https://ai.myhomecloud.kr' }
+    ];
+    cards.forEach(c => {
+        const card = document.getElementById(c.id);
         card.classList.add('locked');
         card.setAttribute('onclick', 'requireLogin()');
-        const badge = card.querySelector('.card-badge');
-        if (badge) badge.insertAdjacentHTML('beforebegin', '<div class="lock-icon">🔒</div>');
+        if (!card.querySelector('.lock-icon')) {
+            const lock = document.createElement('div');
+            lock.className = 'lock-icon';
+            lock.textContent = '🔒';
+            card.appendChild(lock);
+        }
     });
 }
 
 // 카드 잠금 해제
 function unlockCards() {
-    const cards = document.querySelectorAll('.card');
-    const urls = [
-        'https://cloud.myhomecloud.kr',
-        'https://code.myhomecloud.kr',
-        'https://ai.myhomecloud.kr'
+    const cards = [
+        { id: 'card-cloud', url: 'https://cloud.myhomecloud.kr' },
+        { id: 'card-code',  url: 'https://code.myhomecloud.kr' },
+        { id: 'card-ai',    url: 'https://ai.myhomecloud.kr' }
     ];
-    cards.forEach((card, i) => {
+    cards.forEach(c => {
+        const card = document.getElementById(c.id);
         card.classList.remove('locked');
-        card.setAttribute('onclick', `goTo('${urls[i]}')`);
-        const lockIcon = card.querySelector('.lock-icon');
-        if (lockIcon) lockIcon.remove();
+        card.setAttribute('onclick', `goTo('${c.url}')`);
+        const lock = card.querySelector('.lock-icon');
+        if (lock) lock.remove();
     });
 }
 
-// 로그인 필요 알림
+// 로그인 필요
 function requireLogin() {
     openLogin();
 }
@@ -85,21 +107,19 @@ function logout() {
     alert('로그아웃 되었습니다');
 }
 
-// 서비스 페이지 이동
+// 서비스 이동
 function goTo(url) {
     window.location.href = url;
 }
 
-// 로그인 모달 열기
+// 모달 열기
 function openLogin() {
-    const modal = document.getElementById('loginModal');
-    modal.classList.add('active');
+    document.getElementById('loginModal').classList.add('active');
 }
 
-// 로그인 모달 닫기
+// 모달 닫기
 function closeLogin() {
-    const modal = document.getElementById('loginModal');
-    modal.classList.remove('active');
+    document.getElementById('loginModal').classList.remove('active');
 }
 
 // 탭 전환
@@ -144,11 +164,11 @@ async function login() {
         if (response.ok) {
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('username', username);
-            const expireTime = Date.now() + 60 * 60 * 1000; // 1시간 후 
+            const expireTime = Date.now() + 60 * 60 * 1000;
             localStorage.setItem('tokenExpire', expireTime);
             closeLogin();
             checkLoginStatus();
-            alert('로그인 성공! 환영합니다 😊');
+            alert('환영합니다, ' + username + '님! 😊');
         } else {
             alert(data.detail);
         }
@@ -163,10 +183,11 @@ async function register() {
     const password = document.getElementById('reg-password').value;
     const passwordConfirm = document.getElementById('reg-password-confirm').value;
 
-    if (!username || !password) {
-        alert('아이디와 비밀번호를 입력해주세요');
+    if (!username || !password || !passwordConfirm) {
+        alert('모든 항목을 입력해주세요');
         return;
     }
+
     if (password !== passwordConfirm) {
         alert('비밀번호가 일치하지 않습니다 ❌');
         return;
@@ -199,14 +220,10 @@ async function register() {
 
 // 모달 바깥 클릭시 닫기
 document.getElementById('loginModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeLogin();
-    }
+    if (e.target === this) closeLogin();
 });
 
 // ESC 키로 모달 닫기
 document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeLogin();
-    }
+    if (e.key === 'Escape') closeLogin();
 });
