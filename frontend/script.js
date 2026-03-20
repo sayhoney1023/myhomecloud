@@ -1,3 +1,67 @@
+// 페이지 로드시 로그인 상태 확인
+window.onload = function() {
+    checkLoginStatus();
+}
+
+// 로그인 상태 확인
+function checkLoginStatus() {
+    const token = localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+    const loginBtn = document.querySelector('.login-btn');
+
+    if (token && username) {
+        // 로그인 된 상태
+        loginBtn.textContent = username + '님 👋';
+        loginBtn.onclick = logout;
+        unlockCards();
+    } else {
+        // 로그인 안 된 상태
+        loginBtn.textContent = 'Log In';
+        loginBtn.onclick = openLogin;
+        lockCards();
+    }
+}
+
+// 카드 잠금
+function lockCards() {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        card.classList.add('locked');
+        card.setAttribute('onclick', 'requireLogin()');
+        const badge = card.querySelector('.card-badge');
+        if (badge) badge.insertAdjacentHTML('beforebegin', '<div class="lock-icon">🔒</div>');
+    });
+}
+
+// 카드 잠금 해제
+function unlockCards() {
+    const cards = document.querySelectorAll('.card');
+    const urls = [
+        'https://cloud.myhomecloud.kr',
+        'https://code.myhomecloud.kr',
+        'https://ai.myhomecloud.kr'
+    ];
+    cards.forEach((card, i) => {
+        card.classList.remove('locked');
+        card.setAttribute('onclick', `goTo('${urls[i]}')`);
+        const lockIcon = card.querySelector('.lock-icon');
+        if (lockIcon) lockIcon.remove();
+    });
+}
+
+// 로그인 필요 알림
+function requireLogin() {
+    openLogin();
+}
+
+// 로그아웃
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    checkLoginStatus();
+    alert('로그아웃 되었습니다');
+}
+
 // 서비스 페이지 이동
 function goTo(url) {
     window.location.href = url;
@@ -56,7 +120,9 @@ async function login() {
 
         if (response.ok) {
             localStorage.setItem('token', data.access_token);
+            localStorage.setItem('username', username);
             closeLogin();
+            checkLoginStatus();
             alert('로그인 성공! 환영합니다 😊');
         } else {
             alert(data.detail);
@@ -109,4 +175,3 @@ document.addEventListener('keydown', function(e) {
         closeLogin();
     }
 });
-

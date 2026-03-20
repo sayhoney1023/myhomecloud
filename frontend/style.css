@@ -366,4 +366,22 @@ body {
 .modal-tab:hover {
     color: #ffffff;
 }
+/* 카드 잠금 */
+.card.locked {
+    opacity: 0.5;
+    filter: blur(1px);
+}
 
+.card.locked:hover {
+    border-color: #ff4444;
+    transform: none;
+}
+
+.lock-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 28px;
+    z-index: 10;
+}
