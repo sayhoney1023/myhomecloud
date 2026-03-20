@@ -1,5 +1,9 @@
 from fastapi import FastAPI
 from auth.router import router as auth_router
+from database.database import engine, Base
+import models.user
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="MH Cloud API",
