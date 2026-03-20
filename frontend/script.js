@@ -7,18 +7,40 @@ window.onload = function() {
 function checkLoginStatus() {
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
+    const expireTime = localStorage.getItem('tokenExpire');
     const loginBtn = document.querySelector('.login-btn');
 
+    // 토큰 만료 확인
+    if (token && expireTime && Date.now() > parseInt(expireTime)) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('tokenExpire');
+        alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+        lockCards();
+        loginBtn.textContent = 'Log In';
+        loginBtn.onclick = openLogin;
+        return;
+    }
     if (token && username) {
-        // 로그인 된 상태
         loginBtn.textContent = username + '님 👋';
         loginBtn.onclick = logout;
         unlockCards();
-    } else {
-        // 로그인 안 된 상태
+
+        // 만료 시간까지 남은 시간 계산해서 자동 로그아웃 예약
+        const remaining = parseInt(expireTime) - Date.now();
+        setTimeout(() => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('tokenExpire');
+            alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+            checkLoginStatus();
+        }, remaining);
+
+    }else {
         loginBtn.textContent = 'Log In';
         loginBtn.onclick = openLogin;
         lockCards();
+    
     }
 }
 
@@ -58,6 +80,7 @@ function requireLogin() {
 function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    localStorage.removeItem('tokenExpire');
     checkLoginStatus();
     alert('로그아웃 되었습니다');
 }
@@ -121,6 +144,8 @@ async function login() {
         if (response.ok) {
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('username', username);
+            const expireTime = Date.now() + 60 * 60 * 1000; // 1시간 후 
+            localStorage.setItem('tokenExpire', expireTime);
             closeLogin();
             checkLoginStatus();
             alert('로그인 성공! 환영합니다 😊');
