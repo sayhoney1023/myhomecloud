@@ -1,0 +1,25 @@
+services:
+  backend:
+    build:
+      context: ../../backend
+      dockerfile: Dockerfile
+    container_name: mhcloud-backend
+    environment:
+      - DATABASE_URL=postgresql://mhcloud:mhcloud1234@mhcloud-postgres:5432/mhclouddb
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    container_name: mhcloud-postgres
+    environment:
+      - POSTGRES_USER=mhcloud
+      - POSTGRES_PASSWORD=mhcloud1234
+      - POSTGRES_DB=mhclouddb
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    
