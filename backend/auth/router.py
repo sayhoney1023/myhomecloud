@@ -41,4 +41,18 @@ def login(req: LoginRequest, db: Session = Depends(get_db)):
     
     token = create_access_token({"sub": user.username})
     return {"access_token": token, "token_type": "bearer"}
+
+@router.put("/password")
+def change_password(
+    req: PasswordChangeRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if not verify_password(req.current_password, current_user.hashed_password):
+        raise HTTPException(status_code=400, detail="현재 비밀번호가 올바르지 않습니다")
+    
+    current_user.hashed_password = hash_password(req.new_password)
+    db.commit()
+    
+    return {"message": "비밀번호가 성공적으로 변경되었습니다"}
     
