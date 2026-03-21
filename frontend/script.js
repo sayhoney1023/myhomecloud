@@ -26,7 +26,6 @@ function checkLoginStatus() {
     if (token && username) {
         loginBtn.textContent = username + '님 👋';
         loginBtn.onclick = toggleDropdown;
-        loginBtn.onclick = logout;
         unlockCards();
         showStats();
 
