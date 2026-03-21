@@ -15,6 +15,10 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
+class PasswordChangeRequest(BaseModel):
+    current_password: str
+    new_password: str
+
 @router.post("/register")
 def register(req: RegisterRequest, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.username == req.username).first()
