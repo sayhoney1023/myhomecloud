@@ -96,6 +96,37 @@
 
     </div>
 
+    <!-- 유저 드롭다운 -->
+<div class="user-dropdown" id="userDropdown">
+    <button onclick="openPasswordChange()">🔑 비밀번호 변경</button>
+    <button onclick="logout()">🚪 로그아웃</button>
+</div>
+
+<!-- 비밀번호 변경 모달 -->
+<div class="modal-overlay" id="passwordModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>비밀번호 변경</h2>
+            <button class="modal-close" onclick="closePasswordChange()">✕</button>
+        </div>
+        <div style="margin-top: 24px;">
+            <div class="input-group">
+                <label>현재 비밀번호</label>
+                <input type="password" placeholder="현재 비밀번호를 입력하세요" id="pw-current">
+            </div>
+            <div class="input-group">
+                <label>새 비밀번호</label>
+                <input type="password" placeholder="새 비밀번호를 입력하세요" id="pw-new">
+            </div>
+            <div class="input-group">
+                <label>새 비밀번호 확인</label>
+                <input type="password" placeholder="새 비밀번호를 다시 입력하세요" id="pw-new-confirm">
+            </div>
+            <button class="submit-btn" onclick="changePassword()">변경하기</button>
+        </div>
+    </div>
+</div>
+
     <!-- 로그인 모달 -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal">

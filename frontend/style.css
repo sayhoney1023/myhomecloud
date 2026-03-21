@@ -423,3 +423,37 @@ body {
 @media (max-width: 480px) {
     .cards { grid-template-columns: 1fr; }
 }
+
+/* 유저 드롭다운 */
+.user-dropdown {
+    display: none;
+    position: absolute;
+    top: 70px;
+    right: 48px;
+    background: rgba(15,12,41,0.97);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 12px;
+    overflow: hidden;
+    z-index: 200;
+    min-width: 160px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.user-dropdown.active { display: block; }
+
+.user-dropdown button {
+    display: block;
+    width: 100%;
+    padding: 12px 18px;
+    background: transparent;
+    border: none;
+    color: #cbd5e1;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.2s;
+}
+
+.user-dropdown button:hover { background: rgba(255,255,255,0.07); color: #fff; }
