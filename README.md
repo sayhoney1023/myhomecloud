@@ -98,8 +98,11 @@ myhomecloud/
 │   ├── main.py                  # 앱 진입점 · DB 테이블 자동 생성
 │   ├── auth/
 │   │   ├── __init__.py
-│   │   ├── router.py            # 로그인·회원가입 API ✅
-│   │   └── utils.py             # JWT·bcrypt 유틸 ✅
+│   │   ├── router.py            # 로그인·회원가입·비밀번호 변경 API ✅
+│   │   └── utils.py             # JWT·bcrypt·get_current_user 유틸 ✅
+│   ├── system/
+│   │   ├── __init__.py
+│   │   └── router.py            # 서버 상태 API (psutil) ✅
 │   ├── core/
 │   │   ├── __init__.py
 │   │   └── config.py            # 환경 설정 ✅
@@ -110,14 +113,13 @@ myhomecloud/
 │   │   ├── __init__.py
 │   │   └── user.py              # User 테이블 모델 ✅
 │   ├── Dockerfile
-│   ├── venv/                    # Python 가상환경 (git 제외)
 │   └── requirements.txt
 ├── docker/
 │   ├── portal/
 │   │   ├── docker-compose.yml
 │   │   └── nginx.conf           # 캐시 방지 헤더
 │   ├── backend/
-│   │   └── docker-compose.yml   # backend + postgres 통합
+│   │   └── docker-compose.yml   # backend + postgres 통합 · 호스트 디스크 마운트
 │   ├── code-server/docker-compose.yml
 │   └── ai/docker-compose.yml
 └── README.md
@@ -164,15 +166,15 @@ uvicorn main:app --reload
 | GET | `/health` | 헬스체크 | ✅ |
 | POST | `/auth/register` | 회원가입 (비밀번호 확인 포함) | ✅ |
 | POST | `/auth/login` | 로그인 (JWT 발급) | ✅ |
+| PUT | `/auth/password` | 비밀번호 변경 (JWT 인증 필요) | ✅ |
+| GET | `/system/status` | 서버 상태 (CPU · RAM · 디스크) | ✅ |
 
 ### 개발 예정
 | Method | Endpoint | 설명 |
 |--------|----------|------|
-| PUT | `/auth/password` | 비밀번호 변경 |
 | GET | `/files` | 파일 목록 조회 |
 | POST | `/files/upload` | 파일 업로드 |
 | DELETE | `/files/{id}` | 파일 삭제 |
-| GET | `/system/status` | 서버 상태 (CPU · RAM · 디스크) |
 | POST | `/ai/chat` | AI 채팅 (Ollama 연동) |
 
 ---
@@ -186,8 +188,9 @@ uvicorn main:app --reload
 
 ### 로그인 후
 - 서비스 카드 언락 · 정상 클릭 가능
-- 헤더에 `username님 👋` 표시
-- 서버 상태 위젯 (저장공간 · AI 모델 · 활성 서비스)
+- 헤더에 `username님 👋` 드롭다운 메뉴
+- 비밀번호 변경 모달 ✅
+- 서버 상태 위젯 실시간 연동 (디스크 % · CPU · RAM) ✅
 - JWT 토큰 1시간 만료 · 자동 로그아웃
 
 ---
@@ -197,31 +200,33 @@ uvicorn main:app --reload
 ### ✅ 완료
 | 날짜 | 내용 |
 |------|------|
-| 2026.03 | 개발 환경 세팅 (VS Code + Git + GitHub) |
-| 2026.03 | 포털 페이지 직접 제작 (HTML/CSS/JS) |
-| 2026.03 | www.myhomecloud.kr 배포 및 연결 |
-| 2026.03 | Code-Server 구축 (code.myhomecloud.kr) |
-| 2026.03 | VM2 생성 및 AI 서버 구축 (Ollama + Open WebUI) |
-| 2026.03 | ai.myhomecloud.kr 연결 완료 |
-| 2026.03 | GPU 패스스루 완료 (RTX 2060 Super · CUDA 13.0) |
-| 2026.03 | DeepSeek-R1:8b 모델 · SearXNG 웹 검색 연동 |
-| 2026.03 | VM 메모리 재배분 (VM1 6GB · VM2 8GB) |
-| 2026.03 | FastAPI 개발 환경 세팅 · 첫 API 서버 실행 |
-| 2026.03 | JWT 회원가입 · 로그인 API 구현 (bcrypt 암호화) |
-| 2026.03 | PostgreSQL 연동 (SQLAlchemy ORM · fake_db 제거) |
-| 2026.03 | VM1 백엔드 Docker 배포 완료 |
-| 2026.03 | api.myhomecloud.kr 도메인 연결 |
-| 2026.03 | 포털 로그인 · 회원가입 API 연동 완료 |
-| 2026.03 | 회원가입 비밀번호 확인 기능 추가 |
-| 2026.03 | 카드 잠금 · 로그인 후 언락 |
-| 2026.03 | JWT 토큰 만료 자동 로그아웃 |
-| 2026.03 | 포털 UI 글래스모피즘 리디자인 |
+| 2026.03.17 | 개발 환경 세팅 (VS Code + Git + GitHub) |
+| 2026.03.17 | 포털 페이지 직접 제작 (HTML/CSS/JS) |
+| 2026.03.17 | www.myhomecloud.kr 배포 및 연결 |
+| 2026.03.17 | Code-Server 구축 (code.myhomecloud.kr) |
+| 2026.03.17 | VM2 생성 및 AI 서버 구축 (Ollama + Open WebUI) |
+| 2026.03.17 | ai.myhomecloud.kr 연결 완료 |
+| 2026.03.17 | GPU 패스스루 완료 (RTX 2060 Super · CUDA 13.0) |
+| 2026.03.17 | DeepSeek-R1:8b 모델 · SearXNG 웹 검색 연동 |
+| 2026.03.18 | VM 메모리 재배분 (VM1 6GB · VM2 8GB) |
+| 2026.03.18 | FastAPI 개발 환경 세팅 · 첫 API 서버 실행 |
+| 2026.03.19 | JWT 회원가입 · 로그인 API 구현 (bcrypt 암호화) |
+| 2026.03.20 | PostgreSQL 연동 (SQLAlchemy ORM · fake_db 제거) |
+| 2026.03.20 | VM1 백엔드 Docker 배포 완료 |
+| 2026.03.20 | api.myhomecloud.kr 도메인 연결 |
+| 2026.03.20 | 포털 로그인 · 회원가입 API 연동 완료 |
+| 2026.03.20 | 회원가입 비밀번호 확인 기능 추가 |
+| 2026.03.20 | 카드 잠금 · 로그인 후 언락 |
+| 2026.03.20 | JWT 토큰 만료 자동 로그아웃 |
+| 2026.03.20 | 포털 UI 글래스모피즘 리디자인 |
+| 2026.03.21 | 비밀번호 변경 API (PUT /auth/password) |
+| 2026.03.21 | 포털 드롭다운 메뉴 · 비밀번호 변경 모달 |
+| 2026.03.21 | 서버 상태 API (GET /system/status · psutil) |
+| 2026.03.21 | 포털 서버 상태 위젯 실시간 연동 |
 
 ### 🔨 진행 예정
 | 기간 | 내용 |
 |------|------|
-| 2026.04 | 비밀번호 변경 API |
-| 2026.04 | 서버 상태 실시간 위젯 (CPU · RAM · 디스크) |
 | 2026.04 | 파일 업로드 · 다운로드 API |
 | 2026.05 | Cloud UI 직접 제작 (Nextcloud 대체) |
 | 2026.06 | AI 채팅 UI 직접 제작 (Open WebUI 대체) |
@@ -260,7 +265,6 @@ uvicorn main:app --reload
 | mhcloud-code | linuxserver/code-server | VM1 | 8443 | ✅ |
 | nextcloud_app_1 | nextcloud | VM1 | 8080 | ✅ 임시 |
 | nginx-proxy-manager | jc21/nginx-proxy-manager | VM1 | 80/81/443 | ✅ |
-| nextcloud_db_1 | mariadb | VM1 | 3306 | ✅ |
 | mhcloud-ollama | ollama/ollama | VM2 | 11434 | ✅ GPU |
 | mhcloud-ai | open-webui | VM2 | 3000 | ✅ 임시 |
 | mhcloud-searxng | searxng/searxng | VM2 | 8081 | ✅ |
@@ -268,6 +272,16 @@ uvicorn main:app --reload
 ---
 
 ## 변경 이력
+
+### 2026-03-21
+- ✅ 비밀번호 변경 API 구현 (PUT /auth/password · JWT 인증 필요)
+- ✅ get_current_user 유틸 함수 추가 (utils.py)
+- ✅ 포털 헤더 드롭다운 메뉴 (비밀번호 변경 · 로그아웃)
+- ✅ 비밀번호 변경 모달 UI 추가
+- ✅ 서버 상태 API 구현 (GET /system/status · psutil)
+- ✅ 호스트 디스크 마운트 (/:/host:ro)
+- ✅ 포털 서버 상태 위젯 실시간 연동 (디스크 % · CPU · RAM)
+- ✅ Cloudflare 캐시 문제 해결 (?v=2 쿼리스트링)
 
 ### 2026-03-20
 - ✅ PostgreSQL 연동 완료 (SQLAlchemy ORM · fake_db 완전 제거)
