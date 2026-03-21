@@ -278,6 +278,7 @@ async function register() {
         alert('모든 항목을 입력해주세요');
         return;
     }
+    
 
     if (password !== passwordConfirm) {
         alert('비밀번호가 일치하지 않습니다 ❌');
