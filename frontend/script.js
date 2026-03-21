@@ -48,8 +48,29 @@ function checkLoginStatus() {
 }
 
 // 서버 상태 위젯 표시
-function showStats() {
+async function showStats() {
     document.getElementById('serverStats').classList.add('visible');
+
+     const token = localStorage.getItem('token');
+    try {
+        const response = await fetch('https://api.myhomecloud.kr/system/status', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await response.json();
+        
+        document.getElementById('statStorage').textContent = data.disk.percent + '%';
+        document.getElementById('statAI').textContent = 'R1:8b';
+        document.getElementById('statServices').textContent = '3 / 3';
+        
+        // stat-card-sub 업데이트
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards[0].querySelector('.stat-card-sub').textContent = 
+            `${data.disk.used_gb}GB / ${data.disk.total_gb}GB`;
+        statCards[1].querySelector('.stat-card-sub').textContent = 
+            `CPU ${data.cpu.percent}% · RAM ${data.ram.percent}%`;
+    } catch (error) {
+        console.error('서버 상태 조회 실패', error);
+    }
 }
 
 // 서버 상태 위젯 숨기기
