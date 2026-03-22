@@ -67,4 +67,18 @@ def delete_file(
     
     os.remove(file_path)
     return {"message": f"{filename} 삭제 완료!"}
+
+@router.post("/mkdir")
+def create_folder(
+    folder_name: str,
+    current_user: User = Depends(get_current_user)
+):
+    user_dir = get_user_dir(current_user.username)
+    folder_path = os.path.join(user_dir, folder_name)
+    
+    if os.path.exists(folder_path):
+        raise HTTPException(status_code=400, detail="이미 존재하는 폴더입니다")
+    
+    os.makedirs(folder_path)
+    return {"message": f"{folder_name} 폴더 생성 완료!"}
     
