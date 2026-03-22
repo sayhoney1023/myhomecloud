@@ -789,12 +789,22 @@
     }
 
     // 파일 다운로드
-    function downloadFile(el) {
+    async function downloadFile(el) {
     const filename = el.dataset.name;
-    const a = document.createElement('a');
-    a.href = API + '/files/download/' + encodeURIComponent(filename);
-    a.download = filename;
-    a.click();
+    try {
+        const res = await fetch(API + '/files/download/' + encodeURIComponent(filename), {
+            headers: authHeaders()
+        });
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    } catch (e) {
+        alert('다운로드 실패');
+    }
 }
 
     // 파일/폴더 삭제
