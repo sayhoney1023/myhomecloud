@@ -49,8 +49,14 @@ function checkLoginStatus() {
 
 // 서버 상태 위젯 표시
 async function showStats() {
-    document.getElementById('serverStats').classList.add('visible');
+    document.getElementById('serverStats').classList.add('visible')
+    await fetchStats();
+    
+    // 30초마다 자동 새로고침
+    setInterval(fetchStats, 30000);
+}
 
+async function fetchStats() {
      const token = localStorage.getItem('token');
     try {
         const response = await fetch('https://api.myhomecloud.kr/system/status', {
@@ -59,7 +65,7 @@ async function showStats() {
         const data = await response.json();
         
         document.getElementById('statStorage').textContent = data.disk.percent + '%';
-        document.getElementById('statAI').textContent = 'R1:8b';
+        document.getElementById('statAI').textContent = 'Deepseek-R1';
         document.getElementById('statServices').textContent = '3 / 3';
         
         // stat-card-sub 업데이트
