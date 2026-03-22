@@ -69,7 +69,11 @@ def delete_file(
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
     
-    os.remove(file_path)
+    if os.path.isdir(file_path):
+        shutil.rmtree(file_path)  # 폴더 삭제
+    else:
+        os.remove(file_path)  # 파일 삭제
+    
     return {"message": f"{filename} 삭제 완료!"}
 
 @router.post("/mkdir")
