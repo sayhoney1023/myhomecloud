@@ -674,7 +674,7 @@
 
 <script>
     const API = 'https://api.myhomecloud.kr';
-
+    let currentPath = "";  // 여기 추가
     function getToken() {
         return localStorage.getItem('token');
     }
@@ -699,45 +699,48 @@
     }
 
     // 파일 목록 불러오기
-    async function loadFiles() {
-        const list = document.getElementById('fileList');
-        try {
-            const res = await fetch(API + '/files/', { headers: authHeaders() });
-            const data = await res.json();
+    async function loadFiles(path = "") {
+    currentPath = path;
+    document.getElementById('breadcrumbCurrent').textContent = path || '내 파일';
+    
+    const list = document.getElementById('fileList');
+    try {
+        const res = await fetch(API + '/files/?path=' + encodeURIComponent(path), {
+            headers: authHeaders()
+        });
+        const data = await res.json();
 
-            if (!data.files || data.files.length === 0) {
-                list.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📂</div>
-                        <div class="empty-text">파일이 없어요. 업로드해볼까요?</div>
-                    </div>`;
-                return;
-            }
-
-            // 폴더 먼저, 파일 나중
-            const sorted = [...data.files].sort((a, b) => {
-                if (a.type === 'folder' && b.type !== 'folder') return -1;
-                if (a.type !== 'folder' && b.type === 'folder') return 1;
-                return a.name.localeCompare(b.name);
-            });
-
-            list.innerHTML = sorted.map(item => `
-                <div class="file-row">
-                    <div class="file-name">
-                        <div class="file-icon ${getIconClass(item)}">${getIconEmoji(item)}</div>
-                        <span>${item.name}</span>
-                    </div>
-                    <div class="file-meta">${item.type === 'folder' ? '—' : formatSize(item.size_mb)}</div>
-                    <div class="file-meta">${formatDate(item.modified)}</div>
-                    <div class="file-actions">
-                        ${item.type !== 'folder' ? `<div class="action-btn" onclick="downloadFile(this)" data-name="${item.name}" title="다운로드">↓</div>` : ''}
-                        <div class="action-btn danger" onclick="deleteFile(this)" data-name="${item.name}" data-type="${item.type}" title="삭제">×</div>
-                    </div>
-                </div>
-            `).join('');
-        } catch (e) {
-            list.innerHTML = `<div class="empty-state"><div class="empty-text">불러오기 실패</div></div>`;
+        if (!data.files || data.files.length === 0) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📂</div>
+                    <div class="empty-text">파일이 없어요. 업로드해볼까요?</div>
+                </div>`;
+            return;
         }
+
+        const sorted = [...data.files].sort((a, b) => {
+            if (a.type === 'folder' && b.type !== 'folder') return -1;
+            if (a.type !== 'folder' && b.type === 'folder') return 1;
+            return a.name.localeCompare(b.name);
+        });
+
+        list.innerHTML = sorted.map(item => `
+            <div class="file-row" ${item.type === 'folder' ? `onclick="loadFiles('${currentPath ? currentPath + '/' : ''}${item.name}')"` : ''} style="${item.type === 'folder' ? 'cursor:pointer' : ''}">
+                <div class="file-name">
+                    <div class="file-icon ${getIconClass(item)}">${getIconEmoji(item)}</div>
+                    <span>${item.name}</span>
+                </div>
+                <div class="file-meta">${item.type === 'folder' ? '—' : formatSize(item.size_mb)}</div>
+                <div class="file-meta">${formatDate(item.modified)}</div>
+                <div class="file-actions">
+                    ${item.type !== 'folder' ? `<div class="action-btn" onclick="downloadFile(this)" data-name="${currentPath ? currentPath + '/' : ''}${item.name}" title="다운로드">↓</div>` : ''}
+                    <div class="action-btn danger" onclick="deleteFile(this)" data-name="${currentPath ? currentPath + '/' : ''}${item.name}" data-type="${item.type}" title="삭제">×</div>
+                </div>
+            </div>
+        `).join('');
+    } catch (e) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-text">불러오기 실패</div></div>`;
     }
 
     // 저장공간 불러오기
@@ -789,7 +792,7 @@
     }
 
     // 파일 다운로드
-    async function downloadFile(el) {
+async function downloadFile(el) {
     const filename = el.dataset.name;
     try {
         const res = await fetch(API + '/files/download/' + encodeURIComponent(filename), {
