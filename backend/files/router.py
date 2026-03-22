@@ -7,7 +7,7 @@ import shutil
 
 router = APIRouter(prefix="/files", tags=["files"])
 
-BASE_DIR = "/host/nas/files"
+BASE_DIR = "/nas/files"
 
 def get_user_dir(username: str) -> str:
     user_dir = os.path.join(BASE_DIR, username)
@@ -81,4 +81,4 @@ def create_folder(
     
     os.makedirs(folder_path)
     return {"message": f"{folder_name} 폴더 생성 완료!"}
-    
+
