@@ -565,8 +565,10 @@
             </a>
             <div class="breadcrumb">
                 <span class="separator">/</span>
+                <span id="breadcrumbBack" onclick="goBack()" style="display:none; cursor:pointer;">← 뒤로</span>
+                <span class="separator" id="breadcrumbSep" style="display:none;">/</span>
                 <span class="current" id="breadcrumbCurrent">내 파일</span>
-            </div>
+        </div>
         </div>
         <div class="header-right">
             <div class="user-info">
@@ -701,7 +703,9 @@
     // 파일 목록 불러오기
     async function loadFiles(path = "") {
     currentPath = path;
-    document.getElementById('breadcrumbCurrent').textContent = path || '내 파일';
+    document.getElementById('breadcrumbCurrent').textContent = currentPath.split('/').pop() || '내 파일';
+    document.getElementById('breadcrumbBack').style.display = currentPath ? 'inline' : 'none';
+    document.getElementById('breadcrumbSep').style.display = currentPath ? 'inline' : 'none';
     
     const list = document.getElementById('fileList');
     try {
