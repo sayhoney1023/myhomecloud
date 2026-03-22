@@ -773,11 +773,11 @@
 
             try {
                 bar.style.width = '50%';
-                const res = await fetch(API + '/files/upload', {
-                    method: 'POST',
-                    headers: authHeaders(),
-                    body: formData
-                });
+                const res = await fetch(API + '/files/upload?path=' + encodeURIComponent(currentPath), {
+                method: 'POST',
+                headers: authHeaders(),
+                body: formData
+            });
                 bar.style.width = '100%';
                 if (!res.ok) throw new Error();
             } catch (e) {
@@ -786,9 +786,9 @@
         }
 
         setTimeout(() => {
-            progress.style.display = 'none';
-            closeUpload();
-            loadFiles();
+        progress.style.display = 'none';
+        closeUpload();
+        loadFiles(currentPath);
         }, 500);
     }
 

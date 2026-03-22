@@ -35,9 +35,11 @@ def list_files(
 @router.post("/upload")
 def upload_file(
     file: UploadFile = File(...),
+    path: str = "",
     current_user: User = Depends(get_current_user)
 ):
-    user_dir = get_user_dir(current_user.username)
+    user_dir = os.path.join(get_user_dir(current_user.username), path)
+    os.makedirs(user_dir, exist_ok=True)
     file_path = os.path.join(user_dir, file.filename)
     
     with open(file_path, "wb") as f:
