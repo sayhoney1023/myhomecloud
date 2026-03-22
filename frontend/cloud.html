@@ -731,7 +731,7 @@
                     <div class="file-meta">${formatDate(item.modified)}</div>
                     <div class="file-actions">
                         ${item.type !== 'folder' ? `<div class="action-btn" onclick="downloadFile('${item.name}')" title="다운로드">↓</div>` : ''}
-                        <div class="action-btn danger" onclick="deleteFile('${item.name}', '${item.type}')" title="삭제">×</div>
+                        <div class="action-btn danger" onclick="deleteFile(this)" data-name="${item.name}" data-type="${item.type}" title="삭제">×</div>
                     </div>
                 </div>
             `).join('');
@@ -797,20 +797,22 @@
     }
 
     // 파일/폴더 삭제
-    async function deleteFile(name, type) {
-        if (!confirm(`"${name}"을(를) 삭제할까요?`)) return;
-        try {
-            const res = await fetch(API + '/files/' + encodeURIComponent(name), {
-                method: 'DELETE',
-                headers: authHeaders()
-            });
-            if (res.ok) loadFiles();
-            else alert('삭제 실패');
-        } catch (e) {
-            alert('삭제 실패');
-        }
+    async function deleteFile(el) {
+    const name = el.dataset.name;
+    const type = el.dataset.type;
+    if (!confirm(`"${name}"을(를) 삭제할까요?`)) return;
+    try {
+        const res = await fetch(API + '/files/' + encodeURIComponent(name), {
+            method: 'DELETE',
+            headers: authHeaders()
+        });
+        if (res.ok) loadFiles();
+        else alert('삭제 실패');
+    } catch (e) {
+        alert('삭제 실패');
     }
-
+}
+    
     // 폴더 생성
     async function createFolder() {
         const name = document.getElementById('folderName').value.trim();
