@@ -16,7 +16,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://www.myhomecloud.kr"],
+    allow_origins=["https://www.myhomecloud.kr",
+                   "https://cloud.myhomecloud.kr"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -36,4 +37,3 @@ def health_check():
 
 
 
-    
