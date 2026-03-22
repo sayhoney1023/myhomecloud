@@ -15,15 +15,19 @@ def get_user_dir(username: str) -> str:
     return user_dir
 
 @router.get("/")
-def list_files(current_user: User = Depends(get_current_user)):
-    user_dir = get_user_dir(current_user.username)
+def list_files(
+    path: str = "",
+    current_user: User = Depends(get_current_user)
+):
+    user_dir = os.path.join(get_user_dir(current_user.username), path)
     files = []
     for filename in os.listdir(user_dir):
         filepath = os.path.join(user_dir, filename)
         stat = os.stat(filepath)
         files.append({
             "name": filename,
-            "size_mb": round(stat.st_size / (1024**2), 2),
+            "type": "folder" if os.path.isdir(filepath) else "file",
+            "size_mb": round(stat.st_size / (1024**2), 2) if os.path.isfile(filepath) else None,
             "modified": stat.st_mtime
         })
     return {"files": files}
