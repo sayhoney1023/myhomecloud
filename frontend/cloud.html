@@ -821,7 +821,7 @@ async function downloadFile(el) {
             method: 'DELETE',
             headers: authHeaders()
         });
-        if (res.ok) loadFiles();
+        if (res.ok) loadFiles(currentPath);
         else alert('삭제 실패');
     } catch (e) {
         alert('삭제 실패');
