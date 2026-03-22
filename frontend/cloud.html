@@ -705,7 +705,7 @@
             const res = await fetch(API + '/files/', { headers: authHeaders() });
             const data = await res.json();
 
-            if (!data.items || data.items.length === 0) {
+            if (!data.files || data.files.length === 0) {
                 list.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">📂</div>
@@ -715,7 +715,7 @@
             }
 
             // 폴더 먼저, 파일 나중
-            const sorted = [...data.items].sort((a, b) => {
+            const sorted = [...data.files].sort((a, b) => {
                 if (a.type === 'folder' && b.type !== 'folder') return -1;
                 if (a.type !== 'folder' && b.type === 'folder') return 1;
                 return a.name.localeCompare(b.name);
