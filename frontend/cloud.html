@@ -730,7 +730,7 @@
                     <div class="file-meta">${item.type === 'folder' ? '—' : formatSize(item.size_mb)}</div>
                     <div class="file-meta">${formatDate(item.modified)}</div>
                     <div class="file-actions">
-                        ${item.type !== 'folder' ? `<div class="action-btn" onclick="downloadFile('${item.name}')" title="다운로드">↓</div>` : ''}
+                        ${item.type !== 'folder' ? `<div class="action-btn" onclick="downloadFile(this)" data-name="${item.name}" title="다운로드">↓</div>` : ''}
                         <div class="action-btn danger" onclick="deleteFile(this)" data-name="${item.name}" data-type="${item.type}" title="삭제">×</div>
                     </div>
                 </div>
@@ -789,12 +789,13 @@
     }
 
     // 파일 다운로드
-    function downloadFile(filename) {
-        const a = document.createElement('a');
-        a.href = API + '/files/download/' + encodeURIComponent(filename);
-        a.download = filename;
-        a.click();
-    }
+    function downloadFile(el) {
+    const filename = el.dataset.name;
+    const a = document.createElement('a');
+    a.href = API + '/files/download/' + encodeURIComponent(filename);
+    a.download = filename;
+    a.click();
+}
 
     // 파일/폴더 삭제
     async function deleteFile(el) {
