@@ -339,8 +339,3 @@ document.addEventListener('click', function(e) {
 document.getElementById('passwordModal').addEventListener('click', function(e) {
     if (e.target === this) closePasswordChange();
 });
-function goBack() {
-    const parts = currentPath.split('/');
-    parts.pop();
-    loadFiles(parts.join('/'));
-}
