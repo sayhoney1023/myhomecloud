@@ -47,7 +47,7 @@ def upload_file(
     
     return {"message": f"{file.filename} 업로드 완료!"}
 
-@router.get("/download/{filename}")
+@router.get("/download/{filename:path}")
 def download_file(
     filename: str,
     current_user: User = Depends(get_current_user)
@@ -60,7 +60,7 @@ def download_file(
     
     return FileResponse(path=file_path, filename=filename)
 
-@router.delete("/{filename}")
+@router.delete("/{filename:path}")
 def delete_file(
     filename: str,
     current_user: User = Depends(get_current_user)
