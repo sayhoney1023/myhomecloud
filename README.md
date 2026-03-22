@@ -38,7 +38,7 @@ Cloudflare (DDoS 보호 + SSL + IP 숨김)
    ↓
 Nginx Proxy Manager (리버스 프록시)
    ↓
-VM1 - Ubuntu Server (192.168.0.175)  |  RAM 6GB
+VM1 - Ubuntu Server  |  RAM 6GB
 ├── mhcloud-portal    (port 3000)  ✅ UI
 ├── mhcloud-backend   (port 8000)  ✅ FastAPI + PostgreSQL
 ├── mhcloud-postgres  (port 5432)  ✅ PostgreSQL DB
@@ -46,14 +46,14 @@ VM1 - Ubuntu Server (192.168.0.175)  |  RAM 6GB
 ├── nextcloud         (port 8080)  ✅ 임시
 └── nginx-proxy-manager (port 81) ✅
 
-VM2 - AI Server (192.168.0.117)  |  RAM 8GB · RTX 2060 Super GPU
+VM2 - AI Server  |  RAM 8GB · RTX 2060 Super GPU
 ├── mhcloud-ollama    (port 11434) ✅ GPU 모드
 ├── mhcloud-ai        (port 3000)  ✅ 임시
 └── mhcloud-searxng   (port 8081)  ✅
 ```
 
 **물리 서버:** Proxmox VE  
-**하드웨어:** AMD Ryzen 5 3600 (6C/12T) · DDR4 16GB RAM · RTX 2060 Super (8GB VRAM)
+**하드웨어:** AMD Ryzen 5 3600 (6C/12T) · DDR4 16GB RAM · RTX 2060 Super (8GB VRAM) · HDD 2TB
 
 ---
 
@@ -91,7 +91,8 @@ VM2 - AI Server (192.168.0.117)  |  RAM 8GB · RTX 2060 Super GPU
 ```
 myhomecloud/
 ├── frontend/                    # 포털 UI
-│   ├── index.html               # UI
+│   ├── index.html               # 메인 포털
+│   ├── cloud.html               # 파일 매니저 UI ✅
 │   ├── style.css                # 스타일시트
 │   └── script.js                # JWT 인증 · 카드 잠금 · 자동 로그아웃
 ├── backend/                     # FastAPI API 서버 ✅
@@ -103,9 +104,12 @@ myhomecloud/
 │   ├── system/
 │   │   ├── __init__.py
 │   │   └── router.py            # 서버 상태 API (psutil) ✅
+│   ├── files/
+│   │   ├── __init__.py
+│   │   └── router.py            # 파일 API (업로드·다운로드·삭제·목록·폴더생성) ✅
 │   ├── core/
 │   │   ├── __init__.py
-│   │   └── config.py            # 환경 설정 ✅
+│   │   └── config.py            # 환경변수 설정 (SECRET_KEY 분리) ✅
 │   ├── database/
 │   │   ├── __init__.py
 │   │   └── database.py          # SQLAlchemy 엔진 · 세션 ✅
@@ -119,7 +123,8 @@ myhomecloud/
 │   │   ├── docker-compose.yml
 │   │   └── nginx.conf           # 캐시 방지 헤더
 │   ├── backend/
-│   │   └── docker-compose.yml   # backend + postgres 통합 · 호스트 디스크 마운트
+│   │   ├── docker-compose.yml   # backend + postgres · /nas 마운트 ✅
+│   │   └── .env                 # 환경변수 (git 제외) ✅
 │   ├── code-server/docker-compose.yml
 │   └── ai/docker-compose.yml
 └── README.md
@@ -164,18 +169,21 @@ uvicorn main:app --reload
 |--------|----------|------|------|
 | GET | `/` | API 서버 상태 확인 | ✅ |
 | GET | `/health` | 헬스체크 | ✅ |
-| POST | `/auth/register` | 회원가입 (비밀번호 확인 포함) | ✅ |
+| POST | `/auth/register` | 회원가입 (bcrypt 암호화) | ✅ |
 | POST | `/auth/login` | 로그인 (JWT 발급) | ✅ |
 | PUT | `/auth/password` | 비밀번호 변경 (JWT 인증 필요) | ✅ |
 | GET | `/system/status` | 서버 상태 (CPU · RAM · 디스크) | ✅ |
+| GET | `/files/` | 파일 목록 조회 (경로 탐색 지원) | ✅ |
+| POST | `/files/upload` | 파일 업로드 (경로 지정 가능) | ✅ |
+| GET | `/files/download/{filename:path}` | 파일 다운로드 | ✅ |
+| DELETE | `/files/{filename:path}` | 파일 · 폴더 삭제 | ✅ |
+| POST | `/files/mkdir` | 폴더 생성 | ✅ |
 
 ### 개발 예정
 | Method | Endpoint | 설명 |
 |--------|----------|------|
-| GET | `/files` | 파일 목록 조회 |
-| POST | `/files/upload` | 파일 업로드 |
-| DELETE | `/files/{id}` | 파일 삭제 |
 | POST | `/ai/chat` | AI 채팅 (Ollama 연동) |
+| GET | `/files/share/{id}` | 파일 공유 링크 |
 
 ---
 
@@ -190,8 +198,16 @@ uvicorn main:app --reload
 - 서비스 카드 언락 · 정상 클릭 가능
 - 헤더에 `username님 👋` 드롭다운 메뉴
 - 비밀번호 변경 모달 ✅
-- 서버 상태 위젯 실시간 연동 (디스크 % · CPU · RAM) ✅
+- 서버 상태 위젯 실시간 연동 30초 자동 새로고침 (디스크 % · CPU · RAM) ✅
 - JWT 토큰 1시간 만료 · 자동 로그아웃
+
+### 파일 매니저 (cloud.html) ✅
+- 사용자별 독립 저장공간 (/nas/files/{username}/)
+- 파일 업로드 (드래그 앤 드롭 지원)
+- 파일 다운로드 · 삭제
+- 폴더 생성 · 탐색 · 뒤로가기
+- 브라우저 히스토리 연동 (뒤로가기 버튼)
+- HDD 2TB 실제 저장공간 연동
 
 ---
 
@@ -205,7 +221,6 @@ uvicorn main:app --reload
 | 2026.03.17 | www.myhomecloud.kr 배포 및 연결 |
 | 2026.03.17 | Code-Server 구축 (code.myhomecloud.kr) |
 | 2026.03.17 | VM2 생성 및 AI 서버 구축 (Ollama + Open WebUI) |
-| 2026.03.17 | ai.myhomecloud.kr 연결 완료 |
 | 2026.03.17 | GPU 패스스루 완료 (RTX 2060 Super · CUDA 13.0) |
 | 2026.03.17 | DeepSeek-R1:8b 모델 · SearXNG 웹 검색 연동 |
 | 2026.03.18 | VM 메모리 재배분 (VM1 6GB · VM2 8GB) |
@@ -215,21 +230,24 @@ uvicorn main:app --reload
 | 2026.03.20 | VM1 백엔드 Docker 배포 완료 |
 | 2026.03.20 | api.myhomecloud.kr 도메인 연결 |
 | 2026.03.20 | 포털 로그인 · 회원가입 API 연동 완료 |
-| 2026.03.20 | 회원가입 비밀번호 확인 기능 추가 |
-| 2026.03.20 | 카드 잠금 · 로그인 후 언락 |
-| 2026.03.20 | JWT 토큰 만료 자동 로그아웃 |
+| 2026.03.20 | 카드 잠금 · 로그인 후 언락 · JWT 자동 로그아웃 |
 | 2026.03.20 | 포털 UI 글래스모피즘 리디자인 |
-| 2026.03.21 | 비밀번호 변경 API (PUT /auth/password) |
-| 2026.03.21 | 포털 드롭다운 메뉴 · 비밀번호 변경 모달 |
-| 2026.03.21 | 서버 상태 API (GET /system/status · psutil) |
-| 2026.03.21 | 포털 서버 상태 위젯 실시간 연동 |
+| 2026.03.21 | 비밀번호 변경 API + 포털 모달 UI |
+| 2026.03.21 | 서버 상태 API (psutil) + 위젯 실시간 연동 |
+| 2026.03.22 | SECRET_KEY 환경변수 분리 (.env) |
+| 2026.03.22 | HDD 2TB /nas 마운트 연동 |
+| 2026.03.22 | 서버 상태 위젯 30초 자동 새로고침 |
+| 2026.03.22 | 파일 API 완성 (업로드·다운로드·삭제·목록·폴더생성) |
+| 2026.03.22 | 파일 매니저 UI (cloud.html) 제작 |
+| 2026.03.22 | 폴더 탐색 · 현재 경로 업로드 · 뒤로가기 |
 
 ### 🔨 진행 예정
 | 기간 | 내용 |
 |------|------|
-| 2026.04 | 파일 업로드 · 다운로드 API |
-| 2026.05 | Cloud UI 직접 제작 (Nextcloud 대체) |
-| 2026.06 | AI 채팅 UI 직접 제작 (Open WebUI 대체) |
+| 2026.04 | 파일 공유 링크 기능 |
+| 2026.04 | AI 채팅 UI 직접 제작 (Open WebUI 대체) |
+| 2026.05 | cloud.myhomecloud.kr → 직접 만든 파일 매니저로 교체 |
+| 2026.06 | 서브도메인 구조 정리 |
 | 2026.07 | 전체 통합 · 버그 수정 · 포트폴리오 정리 |
 
 ### 🔜 장기 계획
@@ -252,6 +270,7 @@ uvicorn main:app --reload
 | 4 | Proxmox VM 격리 | 가상화 보안 |
 | 5 | JWT + bcrypt | API 인증 · 비밀번호 암호화 ✅ |
 | 6 | CORS | 허용된 도메인만 API 접근 가능 ✅ |
+| 7 | .env | SECRET_KEY · DB 비밀번호 환경변수 분리 ✅ |
 
 ---
 
@@ -273,49 +292,38 @@ uvicorn main:app --reload
 
 ## 변경 이력
 
+### 2026-03-22
+- ✅ SECRET_KEY · DATABASE_URL 환경변수 분리 (.env · docker-compose)
+- ✅ HDD 2TB /nas 마운트 연동 (docker-compose volumes)
+- ✅ 서버 상태 위젯 30초 자동 새로고침
+- ✅ 파일 API 구현 (GET·POST·DELETE · 폴더생성 · 경로 탐색)
+- ✅ /nas/files/{username}/ 사용자별 독립 저장공간
+- ✅ 파일 매니저 UI 제작 (cloud.html · 글래스모피즘)
+- ✅ 드래그 앤 드롭 업로드
+- ✅ 폴더 탐색 · 현재 경로 업로드 · 삭제
+- ✅ 브라우저 히스토리 연동 뒤로가기
+
 ### 2026-03-21
-- ✅ 비밀번호 변경 API 구현 (PUT /auth/password · JWT 인증 필요)
-- ✅ get_current_user 유틸 함수 추가 (utils.py)
-- ✅ 포털 헤더 드롭다운 메뉴 (비밀번호 변경 · 로그아웃)
-- ✅ 비밀번호 변경 모달 UI 추가
+- ✅ 비밀번호 변경 API 구현 (PUT /auth/password)
+- ✅ 포털 헤더 드롭다운 메뉴 · 비밀번호 변경 모달
 - ✅ 서버 상태 API 구현 (GET /system/status · psutil)
-- ✅ 호스트 디스크 마운트 (/:/host:ro)
-- ✅ 포털 서버 상태 위젯 실시간 연동 (디스크 % · CPU · RAM)
-- ✅ Cloudflare 캐시 문제 해결 (?v=2 쿼리스트링)
+- ✅ 포털 서버 상태 위젯 실시간 연동
 
 ### 2026-03-20
-- ✅ PostgreSQL 연동 완료 (SQLAlchemy ORM · fake_db 완전 제거)
-- ✅ VM1 백엔드 Docker 배포 (Dockerfile · docker-compose)
-- ✅ api.myhomecloud.kr 도메인 연결
-- ✅ 포털 로그인 · 회원가입 실제 API 연동
-- ✅ 회원가입 비밀번호 확인 기능 추가
-- ✅ 서비스 카드 🔒 잠금 · 로그인 후 언락
-- ✅ JWT 토큰 만료 자동 로그아웃 (1시간)
-- ✅ 헤더 로그인 후 사용자 이름 표시
-- ✅ 포털 UI 리디자인
-- ✅ CORS 설정 (www.myhomecloud.kr 허용)
-- ✅ Nginx 캐시 방지 헤더 설정
+- ✅ PostgreSQL 연동 완료 (SQLAlchemy ORM)
+- ✅ VM1 백엔드 Docker 배포 · api.myhomecloud.kr 연결
+- ✅ 포털 로그인 · 회원가입 API 연동
+- ✅ 포털 UI 글래스모피즘 리디자인
 
 ### 2026-03-19
 - ✅ JWT 회원가입 · 로그인 API 구현
-- ✅ bcrypt 비밀번호 암호화 적용
-- ✅ 프로젝트 구조 분리 (auth/ · core/)
-- ✅ Swagger 문서 자동 생성 확인
-- ✅ 에러 케이스 검증 (400 중복 아이디 · 401 비밀번호 틀림)
+- ✅ bcrypt 비밀번호 암호화
 
 ### 2026-03-18
-- ✅ VM 메모리 재배분 (VM1 8GB→6GB · VM2 6GB→8GB)
-- ✅ Ollama `KEEP_ALIVE=1m` 설정
-- ✅ FastAPI 개발 환경 세팅 · 첫 API 서버 실행
+- ✅ VM 메모리 재배분 · FastAPI 개발 환경 세팅
 
 ### 2026-03-17
-- ✅ GPU 패스스루 완료 (RTX 2060 Super)
-- ✅ Ubuntu 24.04 UEFI 재설치
-- ✅ NVIDIA Driver 580 + CUDA 13.0
-- ✅ Docker + NVIDIA Container Toolkit
-- ✅ Ollama GPU 모드 실행
-- ✅ DeepSeek-R1:8b 모델 설치
-- ✅ SearXNG 웹 검색 연동
+- ✅ GPU 패스스루 · Ollama · DeepSeek-R1:8b · SearXNG
 
 ---
 
