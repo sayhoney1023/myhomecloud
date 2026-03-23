@@ -1079,7 +1079,7 @@ async function downloadFile(el) {
     currentView = view;
     document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
-    document.querySelector('.file-header').style.display = view === 'tile' ? 'none' : 'tile';
+    document.querySelector('.file-header').style.display = view === 'tile' ? 'none' : 'grid';
     loadFiles(currentPath);
 }
 
