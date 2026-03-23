@@ -775,8 +775,8 @@
             <div class="file-meta">${item.type === 'folder' ? '—' : formatSize(item.size_mb)}</div>
             <div class="file-meta">${formatDate(item.modified)}</div>
             <div class="file-actions">
-                ${item.type !== 'folder' ? `<div class="action-btn" onclick="downloadFile(this)" data-name="${fullPath}" title="다운로드">↓</div>` : ''}
-                <div class="action-btn danger" onclick="deleteFile(this)" data-name="${fullPath}" data-type="${item.type}" title="삭제">×</div>
+                ${item.type !== 'folder' ? `<div class="action-btn" onclick="event.stopPropagation(); downloadFile(this)" data-name="${fullPath}" title="다운로드">↓</div>` : ''}
+                <div class="action-btn danger" onclick="event.stopPropagation(); deleteFile(this)" data-name="${fullPath}" data-type="${item.type}" title="삭제">×</div>
             </div>
         </div>
     `;
