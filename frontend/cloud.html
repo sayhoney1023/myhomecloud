@@ -541,6 +541,58 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
+        /* 그리드 뷰 */
+        .file-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 16px;
+        padding: 20px;
+        }
+
+        .file-grid-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 16px 8px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background 0.15s;
+        text-align: center;
+        position: relative;
+        }
+
+        .file-grid-item:hover { background: rgba(255,255,255,0.08); }
+
+        .file-grid-icon {
+        width: 52px; height: 52px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        }
+
+        .file-grid-name {
+        font-size: 12px;
+        color: #cbd5e1;
+        word-break: break-all;
+        max-width: 100%;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        }
+
+        .file-grid-actions {
+        position: absolute;
+        top: 6px; right: 6px;
+        display: none;
+        gap: 4px;
+        }
+
+        .file-grid-item:hover .file-grid-actions { display: flex; }
+
         /* 반응형 */
         @media (max-width: 768px) {
             .sidebar { display: none; }
@@ -615,8 +667,8 @@
                     <button class="btn" onclick="openMkdir()">📁 폴더 만들기</button>
                 </div>
                 <div class="toolbar-right">
-                    <div class="view-btn active" title="목록 보기">≡</div>
-                    <div class="view-btn" title="그리드 보기">⊞</div>
+                    <div class="view-btn active" onclick="switchView('list')" title="목록 보기">≡</div>
+                    <div class="view-btn" onclick="switchView('grid')" title="그리드 보기">⊞</div>
                 </div>
             </div>
 
@@ -690,7 +742,8 @@
 
 <script>
     const API = 'https://api.myhomecloud.kr';
-    let currentPath = "";  // 여기 추가
+    let currentPath = "";
+    let currentView = 'list'; 
     function getToken() {
         return localStorage.getItem('token');
     }
@@ -757,6 +810,27 @@
             return a.name.localeCompare(b.name);
         });
 
+        if (currentView === 'grid') {
+    list.innerHTML = `<div class="file-grid">${sorted.map(item => {
+        const isPreviewable = item.type === 'file' && ['jpg','jpeg','png','gif','webp','svg','pdf'].includes(item.name.split('.').pop().toLowerCase());
+        const fullPath = `${currentPath ? currentPath + '/' : ''}${item.name}`;
+        const clickAction = item.type === 'folder'
+            ? `onclick="loadFiles('${fullPath}')"`
+            : isPreviewable
+                ? `onclick="previewFile(this)" data-name="${fullPath}"`
+                : '';
+        return `
+            <div class="file-grid-item" ${clickAction}>
+                <div class="file-grid-icon ${getIconClass(item)}">${getIconEmoji(item)}</div>
+                <div class="file-grid-name">${item.name}</div>
+                <div class="file-grid-actions">
+                    ${item.type !== 'folder' ? `<div class="action-btn" onclick="event.stopPropagation(); downloadFile(this)" data-name="${fullPath}" title="다운로드">↓</div>` : ''}
+                    <div class="action-btn danger" onclick="event.stopPropagation(); deleteFile(this)" data-name="${fullPath}" data-type="${item.type}" title="삭제">×</div>
+                </div>
+            </div>
+        `;
+    }).join('')}</div>`;
+} else {
         list.innerHTML = sorted.map(item => {
     const isPreviewable = item.type === 'file' && ['jpg','jpeg','png','gif','webp','svg','pdf'].includes(item.name.split('.').pop().toLowerCase());
     const fullPath = `${currentPath ? currentPath + '/' : ''}${item.name}`;
@@ -765,7 +839,7 @@
     : isPreviewable 
         ? `onclick="previewFile(this)" data-name="${fullPath}"` 
         : '';
-
+        
     return `
         <div class="file-row" ${rowOnclick} style="${item.type === 'folder' || isPreviewable ? 'cursor:pointer' : ''}">
             <div class="file-name">
@@ -781,6 +855,7 @@
         </div>
     `;
 }).join('');
+}
     } catch (e) {
         list.innerHTML = `<div class="empty-state"><div class="empty-text">불러오기 실패</div></div>`;
     }
@@ -998,6 +1073,13 @@ async function downloadFile(el) {
     document.getElementById('previewImg').style.display = 'none';
     document.getElementById('previewPdf').src = '';
     document.getElementById('previewPdf').style.display = 'none';
+}
+
+    function switchView(view) {
+    currentView = view;
+    document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    loadFiles(currentPath);
 }
 
 </script>
