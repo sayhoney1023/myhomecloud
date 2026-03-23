@@ -814,7 +814,7 @@
 
             try {
                 bar.style.width = '50%';
-                const res = await fetchWiithAuth(API + '/files/upload?path=' + encodeURIComponent(currentPath), {
+                const res = await fetchWithAuth(API + '/files/upload?path=' + encodeURIComponent(currentPath), {
                 method: 'POST',
                 body: formData
             });
