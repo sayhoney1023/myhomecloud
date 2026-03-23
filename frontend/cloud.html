@@ -683,6 +683,7 @@
         </div>
         <div style="margin-top: 16px; text-align: center;">
             <img id="previewImg" src="" style="max-width: 100%; max-height: 70vh; border-radius: 8px; display: none;">
+            <iframe id="previewPdf" src="" style="width: 100%; height: 70vh; border: none; border-radius: 8px; display: none;"></iframe>
         </div>
     </div>
 </div>
@@ -757,16 +758,16 @@
         });
 
         list.innerHTML = sorted.map(item => {
-    const isImage = item.type === 'file' && ['jpg','jpeg','png','gif','webp','svg'].includes(item.name.split('.').pop().toLowerCase());
+    const isPreviewable = item.type === 'file' && ['jpg','jpeg','png','gif','webp','svg','pdf'].includes(item.name.split('.').pop().toLowerCase());
     const fullPath = `${currentPath ? currentPath + '/' : ''}${item.name}`;
     const rowOnclick = item.type === 'folder' 
-        ? `onclick="loadFiles('${fullPath}')"` 
-        : isImage 
-            ? `onclick="previewFile(this)" data-name="${fullPath}"` 
-            : '';
+    ? `onclick="loadFiles('${fullPath}')"` 
+    : isPreviewable 
+        ? `onclick="previewFile(this)" data-name="${fullPath}"` 
+        : '';
 
     return `
-        <div class="file-row" ${rowOnclick} style="${item.type === 'folder' || isImage ? 'cursor:pointer' : ''}">
+        <div class="file-row" ${rowOnclick} style="${item.type === 'folder' || isPreviewable ? 'cursor:pointer' : ''}">
             <div class="file-name">
                 <div class="file-icon ${getIconClass(item)}">${getIconEmoji(item)}</div>
                 <span>${item.name}</span>
@@ -966,7 +967,11 @@ async function downloadFile(el) {
     async function previewFile(el) {
     const filename = el.dataset.name;
     const ext = filename.split('.').pop().toLowerCase();
-    if (!['jpg','jpeg','png','gif','webp','svg'].includes(ext)) return;
+    
+    const imageExts = ['jpg','jpeg','png','gif','webp','svg'];
+    const pdfExts = ['pdf'];
+    
+    if (!imageExts.includes(ext) && !pdfExts.includes(ext)) return;
 
     document.getElementById('previewFileName').textContent = filename.split('/').pop();
     document.getElementById('previewModal').classList.add('active');
@@ -975,14 +980,24 @@ async function downloadFile(el) {
     if (!res) return;
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
-    document.getElementById('previewImg').src = url;
-    document.getElementById('previewImg').style.display = 'block';
+
+    if (imageExts.includes(ext)) {
+        document.getElementById('previewImg').src = url;
+        document.getElementById('previewImg').style.display = 'block';
+        document.getElementById('previewPdf').style.display = 'none';
+    } else {
+        document.getElementById('previewPdf').src = url;
+        document.getElementById('previewPdf').style.display = 'block';
+        document.getElementById('previewImg').style.display = 'none';
+    }
 }
 
     function closePreview() {
     document.getElementById('previewModal').classList.remove('active');
     document.getElementById('previewImg').src = '';
     document.getElementById('previewImg').style.display = 'none';
+    document.getElementById('previewPdf').src = '';
+    document.getElementById('previewPdf').style.display = 'none';
 }
 
 </script>
