@@ -668,7 +668,7 @@
                 </div>
                 <div class="toolbar-right">
                     <div class="view-btn active" onclick="switchView('list')" title="목록 보기">≡</div>
-                    <div class="view-btn" onclick="switchView('grid')" title="그리드 보기">⊞</div>
+                    <div class="view-btn" onclick="switchView('tile')" title="그리드 보기">⊞</div>
                 </div>
             </div>
 
@@ -810,7 +810,7 @@
             return a.name.localeCompare(b.name);
         });
 
-        if (currentView === 'grid') {
+        if (currentView === 'tile') {
     list.innerHTML = `<div class="file-grid">${sorted.map(item => {
         const isPreviewable = item.type === 'file' && ['jpg','jpeg','png','gif','webp','svg','pdf'].includes(item.name.split('.').pop().toLowerCase());
         const fullPath = `${currentPath ? currentPath + '/' : ''}${item.name}`;
@@ -1079,6 +1079,7 @@ async function downloadFile(el) {
     currentView = view;
     document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
+    document.querySelector('.file-header').style.display = view === 'tile' ? 'none' : 'tile';
     loadFiles(currentPath);
 }
 
