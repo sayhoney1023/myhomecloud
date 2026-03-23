@@ -684,6 +684,21 @@
     function authHeaders() {
         return { 'Authorization': 'Bearer ' + getToken() };
     }
+    async function fetchWithAuth(url, options = {}) {
+    const res = await fetch(url, {
+        ...options,
+        headers: { ...authHeaders(), ...(options.headers || {}) }
+    });
+    if (res.status === 401) {
+        alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('tokenExpire');
+        window.location.href = '/';
+        return null;
+    }
+    return res;
+}
 
     // 로그인 확인
     window.onload = function() {
@@ -710,9 +725,7 @@
     
     const list = document.getElementById('fileList');
     try {
-        const res = await fetch(API + '/files/?path=' + encodeURIComponent(path), {
-            headers: authHeaders()
-        });
+        const res = await fetchWithAuth(API + '/files/?path=' + encodeURIComponent(path));
         const data = await res.json();
 
         if (!data.files || data.files.length === 0) {
@@ -752,10 +765,10 @@
     // 저장공간 불러오기
     async function loadStorage() {
         try {
-            const res = await fetch(API + '/system/status', { headers: authHeaders() });
-            const data = await res.json();
-            document.getElementById('storageBar').style.width = data.disk.percent + '%';
-            document.getElementById('storageText').textContent =
+            const res = await fetchWithAuth(API + '/system/status');
+                const data = await res.json();
+                document.getElementById('storageBar').style.width = data.disk.percent + '%';
+                document.getElementById('storageText').textContent =
                 `${data.disk.used_gb}GB / ${data.disk.total_gb}GB 사용 중`;
         } catch (e) {}
     }
@@ -778,9 +791,8 @@
 
             try {
                 bar.style.width = '50%';
-                const res = await fetch(API + '/files/upload?path=' + encodeURIComponent(currentPath), {
+                const res = await fetchWiithAuth(API + '/files/upload?path=' + encodeURIComponent(currentPath), {
                 method: 'POST',
-                headers: authHeaders(),
                 body: formData
             });
                 bar.style.width = '100%';
@@ -801,9 +813,7 @@
 async function downloadFile(el) {
     const filename = el.dataset.name;
     try {
-        const res = await fetch(API + '/files/download/' + encodeURIComponent(filename), {
-            headers: authHeaders()
-        });
+        const res = await fetchWithAuth(API + '/files/download/' + encodeURIComponent(filename));
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -822,9 +832,8 @@ async function downloadFile(el) {
     const type = el.dataset.type;
     if (!confirm(`"${name}"을(를) 삭제할까요?`)) return;
     try {
-        const res = await fetch(API + '/files/' + encodeURIComponent(name), {
-            method: 'DELETE',
-            headers: authHeaders()
+        const res = await fetchWithAuth(API + '/files/' + encodeURIComponent(name), {
+            method: 'DELETE'
         });
         if (res.ok) loadFiles(currentPath);
         else alert('삭제 실패');
@@ -839,9 +848,8 @@ async function downloadFile(el) {
         if (!name) { alert('폴더 이름을 입력해주세요'); return; }
 
         try {
-            const res = await fetch(`${API}/files/mkdir?folder_name=${encodeURIComponent(name)}`, {
-                method: 'POST',
-                headers: authHeaders()
+            const res = await fetchWithAuth(`${API}/files/mkdir?folder_name=${encodeURIComponent(name)}`, {
+                method: 'POST'
             });
             if (res.ok) {
                 closeMkdir();
