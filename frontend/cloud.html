@@ -599,6 +599,37 @@
             .file-header, .file-row { grid-template-columns: 2fr 1fr 60px; }
             .file-header div:nth-child(3), .file-row .file-meta:nth-child(3) { display: none; }
         }
+
+        /* 컨텍스트 메뉴 */
+        .context-menu {
+        position: fixed;
+        background: rgba(15,12,41,0.97);
+        border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 10px;
+        padding: 6px;
+        z-index: 300;
+        min-width: 150px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        display: none;
+        }
+
+        .context-menu.active { display: block; }
+
+        .context-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #cbd5e1;
+        cursor: pointer;
+        transition: background 0.15s;
+        }
+
+        .context-menu-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
+        .context-menu-item.danger:hover { background: rgba(239,68,68,0.15); color: #f87171; }
     </style>
 </head>
 <body>
@@ -688,6 +719,14 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- 컨텍스트 메뉴 -->
+<div class="context-menu" id="contextMenu">
+    <div class="context-menu-item" id="ctxDownload" onclick="ctxDownload()">↓ 다운로드</div>
+    <div class="context-menu-item" id="ctxRename" onclick="ctxRename()">✏️ 이름 변경</div>
+    <div class="context-menu-item" id="ctxMove" onclick="ctxMove()">📂 이동</div>
+    <div class="context-menu-item danger" id="ctxDelete" onclick="ctxDelete()">× 삭제</div>
 </div>
 
 <!-- 업로드 모달 -->
@@ -780,6 +819,7 @@
     let currentView = 'list';
     let renameTarget = '';
     let moveTarget = '';
+    let ctxTarget = { name: '', type: '' };
 
     function getToken() {
         return localStorage.getItem('token');
@@ -861,10 +901,8 @@
                 <div class="file-grid-icon ${getIconClass(item)}">${getIconEmoji(item)}</div>
                 <div class="file-grid-name">${item.name}</div>
                 <div class="file-grid-actions">
-                    ${item.type !== 'folder' ? `<div class="action-btn" onclick="event.stopPropagation(); downloadFile(this)" data-name="${fullPath}" title="다운로드">↓</div>` : ''}
-                    <div class="action-btn danger" onclick="event.stopPropagation(); deleteFile(this)" data-name="${fullPath}" data-type="${item.type}" title="삭제">×</div>
-                </div>
-            </div>
+                        <div class="action-btn" onclick="event.stopPropagation(); openContextMenu(event, this)" data-name="${fullPath}" data-type="${item.type}" title="더보기">···</div>
+                        </div>
         `;
     }).join('')}</div>`;
 } else {
@@ -886,10 +924,8 @@
             <div class="file-meta">${item.type === 'folder' ? '—' : formatSize(item.size_mb)}</div>
             <div class="file-meta">${formatDate(item.modified)}</div>
             <div class="file-actions">
-                ${item.type !== 'folder' ? `<div class="action-btn" onclick="event.stopPropagation(); downloadFile(this)" data-name="${fullPath}" title="다운로드">↓</div>` : ''}
-                                            <div class="action-btn danger" onclick="event.stopPropagation(); deleteFile(this)" data-name="${fullPath}" data-type="${item.type}" title="삭제">×</div>
-                                            <div class="action-btn" onclick="event.stopPropagation(); openRename(this)" data-name="${fullPath}" title="이름 변경">✏️</div>
-                                            <div class="action-btn" onclick="event.stopPropagation(); openMove(this)" data-name="${fullPath}" title="이동">📂</div>
+                    <div class="action-btn" onclick="event.stopPropagation(); openContextMenu(event, this)" data-name="${fullPath}" data-type="${item.type}" title="더보기">···</div>
+                    </div>
             </div>
         </div>
     `;
@@ -1188,6 +1224,50 @@ async function downloadFile(el) {
         alert('이동 실패');
     }
 }
+    function openContextMenu(e, el) {
+    e.stopPropagation();
+    ctxTarget.name = el.dataset.name;
+    ctxTarget.type = el.dataset.type;
+
+    const menu = document.getElementById('contextMenu');
+    menu.classList.add('active');
+    menu.style.top = e.clientY + 'px';
+    menu.style.left = e.clientX + 'px';
+
+    // 폴더면 다운로드 숨김
+    document.getElementById('ctxDownload').style.display = ctxTarget.type === 'folder' ? 'none' : 'flex';
+}
+
+    function closeContextMenu() {
+    document.getElementById('contextMenu').classList.remove('active');
+}
+
+    function ctxDownload() {
+    closeContextMenu();
+    const el = { dataset: { name: ctxTarget.name } };
+    downloadFile(el);
+}
+
+    function ctxRename() {
+    closeContextMenu();
+    const el = { dataset: { name: ctxTarget.name } };
+    openRename(el);
+}
+
+    function ctxMove() {
+    closeContextMenu();
+    const el = { dataset: { name: ctxTarget.name } };
+    openMove(el);
+}
+
+    function ctxDelete() {
+    closeContextMenu();
+    const el = { dataset: { name: ctxTarget.name, type: ctxTarget.type } };
+    deleteFile(el);
+}
+
+    // 바깥 클릭시 닫기
+    document.addEventListener('click', () => closeContextMenu());
 
 </script>
 
