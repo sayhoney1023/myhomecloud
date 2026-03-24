@@ -90,40 +90,34 @@ VM2 - AI Server  |  RAM 8GB · RTX 2060 Super GPU
 
 ```
 myhomecloud/
-├── frontend/                    # 포털 UI
+├── frontend/
 │   ├── index.html               # 메인 포털
 │   ├── cloud.html               # 파일 매니저 UI ✅
 │   ├── style.css                # 스타일시트
 │   └── script.js                # JWT 인증 · 카드 잠금 · 자동 로그아웃
-├── backend/                     # FastAPI API 서버 ✅
-│   ├── main.py                  # 앱 진입점 · DB 테이블 자동 생성
+├── backend/
+│   ├── main.py
 │   ├── auth/
-│   │   ├── __init__.py
-│   │   ├── router.py            # 로그인·회원가입·비밀번호 변경 API ✅
-│   │   └── utils.py             # JWT·bcrypt·get_current_user 유틸 ✅
+│   │   ├── router.py            # 로그인·회원가입·비밀번호 변경 ✅
+│   │   └── utils.py             # JWT·bcrypt·get_current_user ✅
 │   ├── system/
-│   │   ├── __init__.py
 │   │   └── router.py            # 서버 상태 API (psutil) ✅
 │   ├── files/
-│   │   ├── __init__.py
-│   │   └── router.py            # 파일 API (업로드·다운로드·삭제·목록·폴더생성) ✅
+│   │   └── router.py            # 파일 API ✅
 │   ├── core/
-│   │   ├── __init__.py
-│   │   └── config.py            # 환경변수 설정 (SECRET_KEY 분리) ✅
+│   │   └── config.py            # 환경변수 설정 ✅
 │   ├── database/
-│   │   ├── __init__.py
-│   │   └── database.py          # SQLAlchemy 엔진 · 세션 ✅
+│   │   └── database.py
 │   ├── models/
-│   │   ├── __init__.py
-│   │   └── user.py              # User 테이블 모델 ✅
+│   │   └── user.py
 │   ├── Dockerfile
 │   └── requirements.txt
 ├── docker/
 │   ├── portal/
 │   │   ├── docker-compose.yml
-│   │   └── nginx.conf           # 캐시 방지 헤더
+│   │   └── nginx.conf
 │   ├── backend/
-│   │   ├── docker-compose.yml   # backend + postgres · /nas 마운트 ✅
+│   │   ├── docker-compose.yml
 │   │   └── .env                 # 환경변수 (git 제외) ✅
 │   ├── code-server/docker-compose.yml
 │   └── ai/docker-compose.yml
@@ -135,22 +129,12 @@ myhomecloud/
 ## 로컬 개발 환경 세팅
 
 ```bash
-# 1. 저장소 클론
 git clone https://github.com/sayhoney1023/myhomecloud.git
 cd myhomecloud/backend
-
-# 2. 가상환경 생성 및 활성화
 python -m venv venv
-
-# Windows
-venv\Scripts\activate
-# macOS / Linux
-source venv/bin/activate
-
-# 3. 의존성 설치
+venv\Scripts\activate        # Windows
+source venv/bin/activate     # macOS / Linux
 pip install -r requirements.txt
-
-# 4. 개발 서버 실행
 uvicorn main:app --reload
 ```
 
@@ -171,13 +155,15 @@ uvicorn main:app --reload
 | GET | `/health` | 헬스체크 | ✅ |
 | POST | `/auth/register` | 회원가입 (bcrypt 암호화) | ✅ |
 | POST | `/auth/login` | 로그인 (JWT 발급) | ✅ |
-| PUT | `/auth/password` | 비밀번호 변경 (JWT 인증 필요) | ✅ |
+| PUT | `/auth/password` | 비밀번호 변경 | ✅ |
 | GET | `/system/status` | 서버 상태 (CPU · RAM · 디스크) | ✅ |
-| GET | `/files/` | 파일 목록 조회 (경로 탐색 지원) | ✅ |
-| POST | `/files/upload` | 파일 업로드 (경로 지정 가능) | ✅ |
+| GET | `/files/` | 파일 목록 조회 (경로 탐색) | ✅ |
+| POST | `/files/upload` | 파일 업로드 (경로 지정) | ✅ |
 | GET | `/files/download/{filename:path}` | 파일 다운로드 | ✅ |
 | DELETE | `/files/{filename:path}` | 파일 · 폴더 삭제 | ✅ |
 | POST | `/files/mkdir` | 폴더 생성 | ✅ |
+| PUT | `/files/rename/{filename:path}` | 파일 · 폴더 이름 변경 | ✅ |
+| PUT | `/files/move/{filename:path}` | 파일 · 폴더 이동 | ✅ |
 
 ### 개발 예정
 | Method | Endpoint | 설명 |
@@ -187,30 +173,34 @@ uvicorn main:app --reload
 
 ---
 
+## 파일 매니저 기능 (cloud.html)
+
+- 사용자별 독립 저장공간 (`/nas/files/{username}/`)
+- 파일 업로드 (드래그 앤 드롭 지원)
+- 파일 다운로드 · 삭제
+- 파일 · 폴더 이름 변경 ✅
+- 파일 · 폴더 이동 (폴더 탐색 UI) ✅
+- 폴더 생성 · 탐색 · 뒤로가기
+- 브라우저 히스토리 연동
+- 이미지 · PDF 미리보기
+- 리스트 · 그리드 뷰 전환 ✅
+- `...` 컨텍스트 메뉴 ✅
+- Font Awesome 파일 타입별 아이콘 ✅
+- 토큰 만료 시 자동 포털 리다이렉트
+- HDD 2TB 실제 저장공간 연동
+
+---
+
 ## 포털 기능
 
 ### 로그인 전
 - 서비스 카드 🔒 잠금 표시
-- 로그인 · 회원가입 모달 (탭 전환)
-- 비밀번호 확인 기능
+- 로그인 · 회원가입 모달
 
 ### 로그인 후
-- 서비스 카드 언락 · 정상 클릭 가능
-- 헤더에 `username님 👋` 드롭다운 메뉴
-- 비밀번호 변경 모달 ✅
-- 서버 상태 위젯 실시간 연동 30초 자동 새로고침 (디스크 % · CPU · RAM) ✅
+- 헤더 드롭다운 메뉴 (비밀번호 변경 · 로그아웃)
+- 서버 상태 위젯 30초 자동 새로고침
 - JWT 토큰 1시간 만료 · 자동 로그아웃
-
-### 파일 매니저 (cloud.html) ✅
-- 사용자별 독립 저장공간 (/nas/files/{username}/)
-- 파일 업로드 (드래그 앤 드롭 지원)
-- 파일 다운로드 · 삭제
-- 폴더 생성 · 탐색 · 뒤로가기
-- 브라우저 히스토리 연동 (뒤로가기 버튼)
-- HDD 2TB 실제 저장공간 연동
-- 이미지 · PDF 미리보기 ✅
-- 그리드 · 리스트 뷰 전환 ✅
-- 토큰 만료 시 자동 포털 리다이렉트 ✅
 
 ---
 
@@ -219,51 +209,45 @@ uvicorn main:app --reload
 ### ✅ 완료
 | 날짜 | 내용 |
 |------|------|
-| 2026.03.17 | 개발 환경 세팅 (VS Code + Git + GitHub) |
-| 2026.03.17 | 포털 페이지 직접 제작 (HTML/CSS/JS) |
-| 2026.03.17 | www.myhomecloud.kr 배포 및 연결 |
-| 2026.03.17 | Code-Server 구축 (code.myhomecloud.kr) |
-| 2026.03.17 | VM2 생성 및 AI 서버 구축 (Ollama + Open WebUI) |
-| 2026.03.17 | GPU 패스스루 완료 (RTX 2060 Super · CUDA 13.0) |
-| 2026.03.17 | DeepSeek-R1:8b 모델 · SearXNG 웹 검색 연동 |
-| 2026.03.18 | VM 메모리 재배분 (VM1 6GB · VM2 8GB) |
-| 2026.03.18 | FastAPI 개발 환경 세팅 · 첫 API 서버 실행 |
-| 2026.03.19 | JWT 회원가입 · 로그인 API 구현 (bcrypt 암호화) |
-| 2026.03.20 | PostgreSQL 연동 (SQLAlchemy ORM · fake_db 제거) |
-| 2026.03.20 | VM1 백엔드 Docker 배포 완료 |
-| 2026.03.20 | api.myhomecloud.kr 도메인 연결 |
-| 2026.03.20 | 포털 로그인 · 회원가입 API 연동 완료 |
-| 2026.03.20 | 카드 잠금 · 로그인 후 언락 · JWT 자동 로그아웃 |
+| 2026.03.17 | 포털 페이지 제작 · 배포 · Code-Server 구축 |
+| 2026.03.17 | AI 서버 구축 (Ollama · Open WebUI) |
+| 2026.03.17 | GPU 패스스루 · DeepSeek-R1:8b · SearXNG |
+| 2026.03.18 | VM 메모리 재배분 · FastAPI 개발 환경 |
+| 2026.03.19 | JWT 회원가입 · 로그인 API (bcrypt) |
+| 2026.03.20 | PostgreSQL 연동 · Docker 배포 · 도메인 연결 |
+| 2026.03.20 | 포털 API 연동 · 카드 잠금 · 자동 로그아웃 |
 | 2026.03.20 | 포털 UI 글래스모피즘 리디자인 |
-| 2026.03.21 | 비밀번호 변경 API + 포털 모달 UI |
-| 2026.03.21 | 서버 상태 API (psutil) + 위젯 실시간 연동 |
-| 2026.03.22 | SECRET_KEY 환경변수 분리 (.env) |
-| 2026.03.22 | HDD 2TB /nas 마운트 연동 |
-| 2026.03.22 | 서버 상태 위젯 30초 자동 새로고침 |
-| 2026.03.22 | 파일 API 완성 (업로드·다운로드·삭제·목록·폴더생성) |
-| 2026.03.22 | 파일 매니저 UI (cloud.html) 제작 |
-| 2026.03.22 | 폴더 탐색 · 현재 경로 업로드 · 뒤로가기 |
+| 2026.03.21 | 비밀번호 변경 API + UI |
+| 2026.03.21 | 서버 상태 API (psutil) + 위젯 연동 |
+| 2026.03.22 | SECRET_KEY 환경변수 분리 |
+| 2026.03.22 | HDD 2TB /nas 마운트 · 위젯 30초 새로고침 |
+| 2026.03.22 | 파일 API + 파일 매니저 UI (cloud.html) |
+| 2026.03.22 | 폴더 탐색 · 뒤로가기 · 브라우저 히스토리 |
 | 2026.03.23 | 이미지 · PDF 미리보기 |
-| 2026.03.23 | 그리드 · 리스트 뷰 전환 |
 | 2026.03.23 | 토큰 만료 자동 리다이렉트 |
-| 2026.03.23 | 삭제 · 다운로드 버튼 클릭 전파 방지 |
+| 2026.03.23 | 그리드 · 리스트 뷰 전환 |
+| 2026.03.24 | 파일 이름 변경 API + UI |
+| 2026.03.24 | 파일 이동 API + 폴더 탐색 UI |
+| 2026.03.24 | `...` 컨텍스트 메뉴 |
+| 2026.03.24 | Font Awesome 파일 타입별 아이콘 |
 
 ### 🔨 진행 예정
 | 기간 | 내용 |
 |------|------|
-| 2026.04 | 파일 공유 링크 기능 |
-| 2026.04 | AI 채팅 UI 직접 제작 (Open WebUI 대체) |
-| 2026.05 | cloud.myhomecloud.kr → 직접 만든 파일 매니저로 교체 |
-| 2026.06 | 서브도메인 구조 정리 |
-| 2026.07 | 전체 통합 · 버그 수정 · 포트폴리오 정리 |
+| 2026.04 | 파일 공유 링크 |
+| 2026.04 | 최근 파일 · 휴지통 |
+| 2026.04 | 드래그 앤 드롭 파일 이동 |
+| 2026.04 | AI 채팅 UI (Open WebUI 대체) |
+| 2026.05 | cloud.myhomecloud.kr 교체 |
+| 2026.07 | 전체 통합 · 포트폴리오 정리 |
 
 ### 🔜 장기 계획
 | 내용 |
 |------|
-| Flutter 모바일 앱 개발 |
-| SSO 통합 로그인 시스템 |
-| Kubernetes (K3s) 도입 |
-| 사용자별 Code-Server (Replit 클론) |
+| Flutter 모바일 앱 |
+| SSO 통합 로그인 |
+| Kubernetes (K3s) |
+| 사용자별 Code-Server |
 
 ---
 
@@ -276,8 +260,8 @@ uvicorn main:app --reload
 | 3 | Nginx Proxy Manager | 리버스 프록시 |
 | 4 | Proxmox VM 격리 | 가상화 보안 |
 | 5 | JWT + bcrypt | API 인증 · 비밀번호 암호화 ✅ |
-| 6 | CORS | 허용된 도메인만 API 접근 가능 ✅ |
-| 7 | .env | SECRET_KEY · DB 비밀번호 환경변수 분리 ✅ |
+| 6 | CORS | 허용된 도메인만 API 접근 ✅ |
+| 7 | .env | SECRET_KEY · DB 비밀번호 분리 ✅ |
 
 ---
 
@@ -299,41 +283,41 @@ uvicorn main:app --reload
 
 ## 변경 이력
 
-### 2026-03-22
+### 2026-03-24
+- ✅ 파일 · 폴더 이름 변경 API (PUT /files/rename/{path})
+- ✅ 파일 · 폴더 이동 API (PUT /files/move/{path})
+- ✅ 이동 모달 폴더 탐색 UI (브레드크럼 포함)
+- ✅ `...` 컨텍스트 메뉴 (다운로드 · 이름변경 · 이동 · 삭제)
+- ✅ Font Awesome 파일 타입별 아이콘 적용
+- ✅ 그리드 뷰 수정 · 헤더 자동 숨김
+
+### 2026-03-23
 - ✅ 이미지 · PDF 미리보기
+- ✅ 토큰 만료 자동 포털 리다이렉트 (fetchWithAuth)
 - ✅ 그리드 · 리스트 뷰 전환
-- ✅ 토큰 만료 자동 리다이렉트
 - ✅ 삭제 · 다운로드 버튼 클릭 전파 방지
 
 ### 2026-03-22
-- ✅ SECRET_KEY · DATABASE_URL 환경변수 분리 (.env · docker-compose)
-- ✅ HDD 2TB /nas 마운트 연동 (docker-compose volumes)
+- ✅ SECRET_KEY · DATABASE_URL 환경변수 분리
+- ✅ HDD 2TB /nas 마운트 연동
 - ✅ 서버 상태 위젯 30초 자동 새로고침
-- ✅ 파일 API 구현 (GET·POST·DELETE · 폴더생성 · 경로 탐색)
-- ✅ /nas/files/{username}/ 사용자별 독립 저장공간
-- ✅ 파일 매니저 UI 제작 (cloud.html · 글래스모피즘)
-- ✅ 드래그 앤 드롭 업로드
-- ✅ 폴더 탐색 · 현재 경로 업로드 · 삭제
-- ✅ 브라우저 히스토리 연동 뒤로가기
+- ✅ 파일 API 구현 (목록 · 업로드 · 다운로드 · 삭제 · 폴더생성)
+- ✅ 파일 매니저 UI (cloud.html)
+- ✅ 폴더 탐색 · 뒤로가기 · 브라우저 히스토리 연동
 
 ### 2026-03-21
-- ✅ 비밀번호 변경 API 구현 (PUT /auth/password)
-- ✅ 포털 헤더 드롭다운 메뉴 · 비밀번호 변경 모달
-- ✅ 서버 상태 API 구현 (GET /system/status · psutil)
-- ✅ 포털 서버 상태 위젯 실시간 연동
+- ✅ 비밀번호 변경 API + 포털 모달
+- ✅ 서버 상태 API (psutil) + 위젯 연동
 
 ### 2026-03-20
-- ✅ PostgreSQL 연동 완료 (SQLAlchemy ORM)
-- ✅ VM1 백엔드 Docker 배포 · api.myhomecloud.kr 연결
-- ✅ 포털 로그인 · 회원가입 API 연동
-- ✅ 포털 UI 글래스모피즘 리디자인
+- ✅ PostgreSQL 연동 · Docker 배포 · 도메인 연결
+- ✅ 포털 API 연동 · 글래스모피즘 리디자인
 
 ### 2026-03-19
-- ✅ JWT 회원가입 · 로그인 API 구현
-- ✅ bcrypt 비밀번호 암호화
+- ✅ JWT 회원가입 · 로그인 · bcrypt 암호화
 
 ### 2026-03-18
-- ✅ VM 메모리 재배분 · FastAPI 개발 환경 세팅
+- ✅ VM 메모리 재배분 · FastAPI 개발 환경
 
 ### 2026-03-17
 - ✅ GPU 패스스루 · Ollama · DeepSeek-R1:8b · SearXNG
