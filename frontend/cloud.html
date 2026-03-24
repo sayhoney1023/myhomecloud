@@ -757,11 +757,29 @@
     </div>
 </div>
 
+<!-- 파일 이동 모달 -->
+<div class="modal-overlay" id="moveModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>파일 이동</h2>
+            <button class="modal-close" onclick="closeMove()">✕</button>
+        </div>
+        <div style="margin-top: 24px;">
+            <div class="input-group">
+                <label>이동할 경로 (빈칸이면 최상위 폴더)</label>
+                <input type="text" id="moveInput" placeholder="예: 폴더명 또는 폴더1/폴더2">
+            </div>
+            <button class="submit-btn" onclick="submitMove()">이동하기</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const API = 'https://api.myhomecloud.kr';
     let currentPath = "";
     let currentView = 'list';
     let renameTarget = '';
+    let moveTarget = '';
 
     function getToken() {
         return localStorage.getItem('token');
@@ -871,6 +889,7 @@
                 ${item.type !== 'folder' ? `<div class="action-btn" onclick="event.stopPropagation(); downloadFile(this)" data-name="${fullPath}" title="다운로드">↓</div>` : ''}
                                             <div class="action-btn danger" onclick="event.stopPropagation(); deleteFile(this)" data-name="${fullPath}" data-type="${item.type}" title="삭제">×</div>
                                             <div class="action-btn" onclick="event.stopPropagation(); openRename(this)" data-name="${fullPath}" title="이름 변경">✏️</div>
+                                            <div class="action-btn" onclick="event.stopPropagation(); openMove(this)" data-name="${fullPath}" title="이동">📂</div>
             </div>
         </div>
     `;
@@ -1135,6 +1154,38 @@ async function downloadFile(el) {
         }
     } catch (e) {
         alert('변경 실패');
+    }
+}
+    //파일 이동
+    function openMove(el) {
+    moveTarget = el.dataset.name;
+    document.getElementById('moveInput').value = '';
+    document.getElementById('moveModal').classList.add('active');
+}
+
+    function closeMove() {
+    document.getElementById('moveModal').classList.remove('active');
+    moveTarget = '';
+}
+
+    async function submitMove() {
+    const destPath = document.getElementById('moveInput').value.trim();
+
+    try {
+        const res = await fetchWithAuth(API + '/files/move/' + encodeURIComponent(moveTarget), {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dest_path: destPath })
+        });
+        if (res && res.ok) {
+            closeMove();
+            loadFiles(currentPath);
+        } else {
+            const data = await res.json();
+            alert(data.detail || '이동 실패');
+        }
+    } catch (e) {
+        alert('이동 실패');
     }
 }
 
