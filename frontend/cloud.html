@@ -797,18 +797,15 @@
 
 <!-- 파일 이동 모달 -->
 <div class="modal-overlay" id="moveModal">
-    <div class="modal">
+    <div class="modal" style="max-width: 500px;">
         <div class="modal-header">
-            <h2>파일 이동</h2>
+            <div id="moveBreadcrumb" style="display:flex; align-items:center; gap:6px; font-size:13px; color:#94a3b8;">
+                <span onclick="moveBrowse('')" style="cursor:pointer;">🏠</span>
+            </div>
             <button class="modal-close" onclick="closeMove()">✕</button>
         </div>
-        <div style="margin-top: 24px;">
-            <div class="input-group">
-                <label>이동할 경로 (빈칸이면 최상위 폴더)</label>
-                <input type="text" id="moveInput" placeholder="예: 폴더명 또는 폴더1/폴더2">
-            </div>
-            <button class="submit-btn" onclick="submitMove()">이동하기</button>
-        </div>
+        <div id="moveFolderList" style="margin-top: 16px; max-height: 300px; overflow-y: auto;"></div>
+        <button class="submit-btn" style="margin-top: 16px;" onclick="submitMove()">여기로 이동</button>
     </div>
 </div>
 
@@ -818,6 +815,7 @@
     let currentView = 'list';
     let renameTarget = '';
     let moveTarget = '';
+    let moveDestPath = '';
     let ctxTarget = { name: '', type: '' };
 
     function getToken() {
@@ -1195,23 +1193,66 @@ async function downloadFile(el) {
     //파일 이동
     function openMove(el) {
     moveTarget = el.dataset.name;
-    document.getElementById('moveInput').value = '';
+    moveDestPath = '';
     document.getElementById('moveModal').classList.add('active');
+    moveBrowse('');
 }
 
     function closeMove() {
     document.getElementById('moveModal').classList.remove('active');
     moveTarget = '';
+    moveDestPath = '';
 }
 
-    async function submitMove() {
-    const destPath = document.getElementById('moveInput').value.trim();
+    async function moveBrowse(path) {
+    moveDestPath = path;
 
+    // 브레드크럼 업데이트
+    const breadcrumb = document.getElementById('moveBreadcrumb');
+    const parts = path ? path.split('/') : [];
+    let html = `<span onclick="moveBrowse('')" style="cursor:pointer;">🏠</span>`;
+    let accumulated = '';
+    parts.forEach(p => {
+        accumulated += (accumulated ? '/' : '') + p;
+        const acc = accumulated;
+        html += `<span style="color:#475569"> / </span><span onclick="moveBrowse('${acc}')" style="cursor:pointer; color:#93c5fd">${p}</span>`;
+    });
+    breadcrumb.innerHTML = html;
+
+    // 폴더 목록 불러오기
+    const list = document.getElementById('moveFolderList');
+    list.innerHTML = '<div style="color:#475569; font-size:13px; padding:12px;">불러오는 중...</div>';
+
+    const res = await fetchWithAuth(API + '/files/?path=' + encodeURIComponent(path));
+    if (!res) return;
+    const data = await res.json();
+
+    const folders = (data.files || []).filter(f => f.type === 'folder');
+
+    if (folders.length === 0) {
+        list.innerHTML = '<div style="color:#475569; font-size:13px; padding:12px;">폴더가 없어요</div>';
+        return;
+    }
+
+    list.innerHTML = folders.map(f => {
+        const fullPath = path ? path + '/' + f.name : f.name;
+        return `
+            <div onclick="moveBrowse('${fullPath}')" style="display:flex; align-items:center; gap:10px; padding:10px 4px; border-radius:8px; cursor:pointer; font-size:13px; color:#e2e8f0; transition:background 0.15s;"
+                onmouseover="this.style.background='rgba(255,255,255,0.05)'"
+                onmouseout="this.style.background='transparent'">
+                <span style="font-size:18px;">📁</span>
+                <span>${f.name}</span>
+            </div>
+        `;
+    }).join('');
+}
+
+async function submitMove() {
     try {
         const res = await fetchWithAuth(API + '/files/move/' + encodeURIComponent(moveTarget), {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ dest_path: destPath })
+            body: JSON.stringify({ dest_path: moveDestPath })
         });
         if (res && res.ok) {
             closeMove();
@@ -1243,7 +1284,7 @@ async function downloadFile(el) {
 
     menu.style.top = y + 'px';
     menu.style.left = x + 'px';
-    
+
     //폴더는 다운로드 숨김
 
     document.getElementById('ctxDownload').style.display = ctxTarget.type === 'folder' ? 'none' : 'flex';
