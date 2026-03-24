@@ -766,7 +766,7 @@
 
 <!-- 미리보기 모달 -->
 <div class="modal-overlay" id="previewModal">
-    <div class="modal" style="max-width: 1200px; width: 95vw;">
+    <div class="modal" style="max-width: 600px; width: 90vw;">
         <div class="modal-header">
             <h2 id="previewFileName">미리보기</h2>
             <button class="modal-close" onclick="closePreview()">✕</button>
@@ -804,7 +804,7 @@
             </div>
             <button class="modal-close" onclick="closeMove()">✕</button>
         </div>
-        <div id="moveFolderList" style="margin-top: 16px; max-height: 300px; overflow-y: auto;"></div>
+        <div id="moveFolderList" style="margin-top: 16px; max-height: 450px; overflow-y: auto;"></div>
         <button class="submit-btn" style="margin-top: 16px;" onclick="submitMove()">여기로 이동</button>
     </div>
 </div>
@@ -1227,7 +1227,7 @@ async function downloadFile(el) {
     if (!res) return;
     const data = await res.json();
 
-    const folders = (data.files || []).filter(f => f.type === 'folder');
+    const folders = data.files || [];
 
     if (folders.length === 0) {
         list.innerHTML = '<div style="color:#475569; font-size:13px; padding:12px;">폴더가 없어요</div>';
