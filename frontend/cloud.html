@@ -740,10 +740,29 @@
     </div>
 </div>
 
+<!-- 이름 변경 모달 -->
+<div class="modal-overlay" id="renameModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>이름 변경</h2>
+            <button class="modal-close" onclick="closeRename()">✕</button>
+        </div>
+        <div style="margin-top: 24px;">
+            <div class="input-group">
+                <label>새 이름</label>
+                <input type="text" id="renameInput" placeholder="새 이름을 입력하세요">
+            </div>
+            <button class="submit-btn" onclick="submitRename()">변경하기</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const API = 'https://api.myhomecloud.kr';
     let currentPath = "";
-    let currentView = 'list'; 
+    let currentView = 'list';
+    let renameTarget = '';
+
     function getToken() {
         return localStorage.getItem('token');
     }
@@ -850,7 +869,8 @@
             <div class="file-meta">${formatDate(item.modified)}</div>
             <div class="file-actions">
                 ${item.type !== 'folder' ? `<div class="action-btn" onclick="event.stopPropagation(); downloadFile(this)" data-name="${fullPath}" title="다운로드">↓</div>` : ''}
-                <div class="action-btn danger" onclick="event.stopPropagation(); deleteFile(this)" data-name="${fullPath}" data-type="${item.type}" title="삭제">×</div>
+                                            <div class="action-btn danger" onclick="event.stopPropagation(); deleteFile(this)" data-name="${fullPath}" data-type="${item.type}" title="삭제">×</div>
+                                            <div class="action-btn" onclick="event.stopPropagation(); openRename(this)" data-name="${fullPath}" title="이름 변경">✏️</div>
             </div>
         </div>
     `;
@@ -1081,6 +1101,41 @@ async function downloadFile(el) {
     event.target.classList.add('active');
     document.querySelector('.file-header').style.display = view === 'tile' ? 'none' : 'grid';
     loadFiles(currentPath);
+}
+
+    //파일 이름바꾸기
+    function openRename(el) {
+    renameTarget = el.dataset.name;
+    const currentName = renameTarget.split('/').pop();
+    document.getElementById('renameInput').value = currentName;
+    document.getElementById('renameModal').classList.add('active');
+}
+
+    function closeRename() {
+    document.getElementById('renameModal').classList.remove('active');
+    renameTarget = '';
+}
+
+    async function submitRename() {
+    const newName = document.getElementById('renameInput').value.trim();
+    if (!newName) { alert('새 이름을 입력해주세요'); return; }
+
+    try {
+        const res = await fetchWithAuth(API + '/files/rename/' + encodeURIComponent(renameTarget), {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ new_name: newName })
+        });
+        if (res && res.ok) {
+            closeRename();
+            loadFiles(currentPath);
+        } else {
+            const data = await res.json();
+            alert(data.detail || '변경 실패');
+        }
+    } catch (e) {
+        alert('변경 실패');
+    }
 }
 
 </script>
