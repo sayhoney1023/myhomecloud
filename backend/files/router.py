@@ -11,6 +11,8 @@ router = APIRouter(prefix="/files", tags=["files"])
 
 BASE_DIR = "/nas/files"
 
+# 파일 보기 
+
 def get_user_dir(username: str) -> str:
     user_dir = os.path.join(BASE_DIR, username)
     os.makedirs(user_dir, exist_ok=True)
@@ -34,6 +36,8 @@ def list_files(
         })
     return {"files": files}
 
+#업로드
+
 @router.post("/upload")
 def upload_file(
     file: UploadFile = File(...),
@@ -49,6 +53,8 @@ def upload_file(
     
     return {"message": f"{file.filename} 업로드 완료!"}
 
+#다운로드
+
 @router.get("/download/{filename:path}")
 def download_file(
     filename: str,
@@ -61,6 +67,8 @@ def download_file(
         raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
     
     return FileResponse(path=file_path, filename=filename)
+
+#삭제 로직 
 
 @router.delete("/{filename:path}")
 def delete_file(
@@ -80,6 +88,8 @@ def delete_file(
     
     return {"message": f"{filename} 삭제 완료!"}
 
+#폴더 생성 
+
 @router.post("/mkdir")
 def create_folder(
     folder_name: str,
@@ -93,6 +103,7 @@ def create_folder(
     
     os.makedirs(folder_path)
     return {"message": f"{folder_name} 폴더 생성 완료!"}
+
 #파일 이름 변경
 
 class RenameRequest(BaseModel):
@@ -116,4 +127,29 @@ def rename_file(
     
     os.rename(old_path, new_path)
     return {"message": f"{req.new_name}으로 변경 완료!"}
+
+#파일 이동
+
+class MoveRequest(BaseModel):
+    dest_path: str
+
+@router.put("/move/{filename:path}")
+def move_file(
+    filename: str,
+    req: MoveRequest,
+    current_user: User = Depends(get_current_user)
+):
+    user_dir = get_user_dir(current_user.username)
+    old_path = os.path.join(user_dir, filename)
+    new_path = os.path.join(user_dir, req.dest_path, os.path.basename(filename))
+
+    if not os.path.exists(old_path):
+        raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
+    
+    if os.path.exists(new_path):
+        raise HTTPException(status_code=400, detail="이미 존재하는 파일입니다")
+
+    os.makedirs(os.path.dirname(new_path), exist_ok=True)
+    shutil.move(old_path, new_path)
+    return {"message": f"{req.dest_path}로 이동 완료!"}
 
