@@ -1235,16 +1235,27 @@ async function downloadFile(el) {
     }
 
     list.innerHTML = folders.map(f => {
-        const fullPath = path ? path + '/' + f.name : f.name;
+    const fullPath = path ? path + '/' + f.name : f.name;
+    
+    if (f.type === 'folder') {
         return `
             <div onclick="moveBrowse('${fullPath}')" style="display:flex; align-items:center; gap:10px; padding:10px 4px; border-radius:8px; cursor:pointer; font-size:13px; color:#e2e8f0; transition:background 0.15s;"
                 onmouseover="this.style.background='rgba(255,255,255,0.05)'"
                 onmouseout="this.style.background='transparent'">
                 <span style="font-size:18px;">📁</span>
                 <span>${f.name}</span>
+                <span style="margin-left:auto; color:#475569;">›</span>
             </div>
         `;
-    }).join('');
+    } else {
+        return `
+            <div style="display:flex; align-items:center; gap:10px; padding:10px 4px; border-radius:8px; font-size:13px; color:#475569;">
+                <span style="font-size:18px;">${getIconEmoji(f)}</span>
+                <span>${f.name}</span>
+            </div>
+        `;
+    }
+}).join('');
 }
 
 async function submitMove() {
