@@ -1225,16 +1225,27 @@ async function downloadFile(el) {
     }
 }
     function openContextMenu(e, el) {
-    e.stopPropagation();
+     e.stopPropagation();
     ctxTarget.name = el.dataset.name;
     ctxTarget.type = el.dataset.type;
 
     const menu = document.getElementById('contextMenu');
     menu.classList.add('active');
-    menu.style.top = e.clientY + 'px';
-    menu.style.left = e.clientX + 'px';
 
-    // 폴더면 다운로드 숨김
+    // 화면 오른쪽 끝 넘어가면 왼쪽으로
+    const menuWidth = 160;
+    const menuHeight = 140;
+    let x = e.clientX;
+    let y = e.clientY;
+
+    if (x + menuWidth > window.innerWidth) x = x - menuWidth;
+    if (y + menuHeight > window.innerHeight) y = y - menuHeight;
+
+    menu.style.top = y + 'px';
+    menu.style.left = x + 'px';
+    
+    //폴더는 다운로드 숨김
+
     document.getElementById('ctxDownload').style.display = ctxTarget.type === 'folder' ? 'none' : 'flex';
 }
 
