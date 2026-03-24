@@ -6,27 +6,6 @@ import os
 import shutil
 from pydantic import BaseModel
 
-class RenameRequest(BaseModel):
-    new_name: str
-
-@router.put("/rename/{filename:path}")
-def rename_file(
-    filename: str,
-    req: RenameRequest,
-    current_user: User = Depends(get_current_user)
-):
-    user_dir = get_user_dir(current_user.username)
-    old_path = os.path.join(user_dir, filename)
-    new_path = os.path.join(os.path.dirname(old_path), req.new_name)
-
-    if not os.path.exists(old_path):
-        raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
-    
-    if os.path.exists(new_path):
-        raise HTTPException(status_code=400, detail="이미 존재하는 이름입니다")
-    
-    os.rename(old_path, new_path)
-    return {"message": f"{req.new_name}으로 변경 완료!"}
 
 router = APIRouter(prefix="/files", tags=["files"])
 
@@ -114,4 +93,27 @@ def create_folder(
     
     os.makedirs(folder_path)
     return {"message": f"{folder_name} 폴더 생성 완료!"}
+#파일 이름 변경
+
+class RenameRequest(BaseModel):
+    new_name: str
+
+@router.put("/rename/{filename:path}")
+def rename_file(
+    filename: str,
+    req: RenameRequest,
+    current_user: User = Depends(get_current_user)
+):
+    user_dir = get_user_dir(current_user.username)
+    old_path = os.path.join(user_dir, filename)
+    new_path = os.path.join(os.path.dirname(old_path), req.new_name)
+
+    if not os.path.exists(old_path):
+        raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
+    
+    if os.path.exists(new_path):
+        raise HTTPException(status_code=400, detail="이미 존재하는 이름입니다")
+    
+    os.rename(old_path, new_path)
+    return {"message": f"{req.new_name}으로 변경 완료!"}
 
