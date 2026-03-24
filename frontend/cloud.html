@@ -6,6 +6,8 @@
     <title>MH Cloud - 파일 매니저</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -895,7 +897,7 @@
                 : '';
         return `
             <div class="file-grid-item" ${clickAction}>
-                <div class="file-grid-icon ${getIconClass(item)}">${getIconEmoji(item)}</div>
+                <div class="file-grid-icon ${getIconClass(item)}">${getIconHtml(item)}</div>
                 <div class="file-grid-name">${item.name}</div>
                 <div class="file-grid-actions">
                         <div class="action-btn" onclick="event.stopPropagation(); openContextMenu(event, this)" data-name="${fullPath}" data-type="${item.type}" title="더보기">···</div>
@@ -916,7 +918,7 @@
     return `
         <div class="file-row" ${rowOnclick} style="${item.type === 'folder' || isPreviewable ? 'cursor:pointer' : ''}">
             <div class="file-name">
-                <div class="file-icon ${getIconClass(item)}">${getIconEmoji(item)}</div>
+                <div class="file-icon ${getIconClass(item)}">${getIconHtml(item)}</div>
                 <span>${item.name}</span>
             </div>
             <div class="file-meta">${item.type === 'folder' ? '—' : formatSize(item.size_mb)}</div>
@@ -982,37 +984,38 @@
     }
 
     // 파일 다운로드
-async function downloadFile(el) {
-    const filename = el.dataset.name;
-    try {
-        const res = await fetchWithAuth(API + '/files/download/' + encodeURIComponent(filename));
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        a.click();
-        URL.revokeObjectURL(url);
-    } catch (e) {
+        async function downloadFile(el) {
+        const filename = el.dataset.name;
+        try {
+            const res = await fetchWithAuth(API + '/files/download/' + encodeURIComponent(filename));
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }catch (e) {
         alert('다운로드 실패');
+        }
     }
-}
 
     // 파일/폴더 삭제
     async function deleteFile(el) {
     const name = el.dataset.name;
     const type = el.dataset.type;
     if (!confirm(`"${name}"을(를) 삭제할까요?`)) return;
-    try {
-        const res = await fetchWithAuth(API + '/files/' + encodeURIComponent(name), {
-            method: 'DELETE'
-        });
+        try {
+            const res = await fetchWithAuth(API + '/files/' + encodeURIComponent(name), {
+                method: 'DELETE'
+            });
         if (res.ok) loadFiles(currentPath);
+
         else alert('삭제 실패');
     } catch (e) {
         alert('삭제 실패');
     }
-}
+    }
     
     // 폴더 생성
     async function createFolder() {
@@ -1045,16 +1048,18 @@ async function downloadFile(el) {
         return 'etc';
     }
 
-    function getIconEmoji(item) {
-        if (item.type === 'folder') return '📁';
+    function getIconHtml(item) {
+        if (item.type === 'folder') return '<i class="fa-solid fa-folder" style="color:#f59e0b; font-size:18px;"></i>';
         const ext = item.name.split('.').pop().toLowerCase();
-        if (['jpg','jpeg','png','gif','webp','svg'].includes(ext)) return '🖼️';
-        if (ext === 'pdf') return '📄';
-        if (['doc','docx'].includes(ext)) return '📝';
-        if (['mp4','mov','avi'].includes(ext)) return '🎬';
-        if (['mp3','wav'].includes(ext)) return '🎵';
-        if (['zip','tar','gz'].includes(ext)) return '📦';
-        return '📎';
+        if (['jpg','jpeg','png','gif','webp','svg'].includes(ext)) return '<i class="fa-regular fa-file-image" style="color:#8b5cf6; font-size:18px;"></i>';
+        if (ext === 'pdf') return '<i class="fa-regular fa-file-pdf" style="color:#ef4444; font-size:18px;"></i>';
+        if (['doc','docx'].includes(ext)) return '<i class="fa-regular fa-file-word" style="color:#2b579a; font-size:18px;"></i>';
+        if (['ppt','pptx'].includes(ext)) return '<i class="fa-regular fa-file-powerpoint" style="color:#c43e1c; font-size:18px;"></i>';
+        if (['xls','xlsx'].includes(ext)) return '<i class="fa-regular fa-file-excel" style="color:#217346; font-size:18px;"></i>';
+        if (['zip','tar','gz'].includes(ext)) return '<i class="fa-regular fa-file-zipper" style="color:#f59e0b; font-size:18px;"></i>';
+        if (['mp4','mov','avi'].includes(ext)) return '<i class="fa-regular fa-file-video" style="color:#3b82f6; font-size:18px;"></i>';
+        if (['mp3','wav'].includes(ext)) return '<i class="fa-regular fa-file-audio" style="color:#ec4899; font-size:18px;"></i>';
+        return '<i class="fa-regular fa-file" style="color:#64748b; font-size:18px;"></i>';
     }
 
     function formatSize(mb) {
@@ -1250,7 +1255,7 @@ async function downloadFile(el) {
     } else {
         return `
             <div style="display:flex; align-items:center; gap:10px; padding:10px 4px; border-radius:8px; font-size:13px; color:#475569;">
-                <span style="font-size:18px;">${getIconEmoji(f)}</span>
+                <span style="font-size:18px;">${getIconHtml(f)}</span>
                 <span>${f.name}</span>
             </div>
         `;
