@@ -860,6 +860,9 @@
 
     // 파일 목록 불러오기
     async function loadFiles(path = "") {
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); // nav-item active 전환
+    document.querySelectorAll('.nav-item')[0].classList.add('active');
+
     currentPath = path;
     history.pushState({ path }, '', '/cloud.html' + (path ? '?path=' + encodeURIComponent(path) : ''));
     document.getElementById('breadcrumbCurrent').textContent = currentPath.split('/').pop() || '내 파일';
@@ -1335,12 +1338,14 @@ async function submitMove() {
 }
 
     // 바깥 클릭시 닫기
-    
+
     document.addEventListener('click', () => closeContextMenu());
     
     // 최근 항목 불러오기
 
     async function loadRecentFiles() {
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));   //nav-item active
+    document.querySelectorAll('.nav-item')[1].classList.add('active');
     currentPath = '';
     document.getElementById('breadcrumbCurrent').textContent = '최근 파일';
     document.getElementById('breadcrumbBack').style.display = 'none';
