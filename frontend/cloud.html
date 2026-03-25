@@ -672,7 +672,7 @@
                 <span class="nav-icon">📁</span>
                 내 파일
             </div>
-            <div class="nav-item">
+            <div class="nav-item" onclick="loadRecentFiles()">
                 <span class="nav-icon">🕐</span>
                 최근 파일
             </div>
@@ -1335,7 +1335,72 @@ async function submitMove() {
 }
 
     // 바깥 클릭시 닫기
+    
     document.addEventListener('click', () => closeContextMenu());
+    
+    // 최근 항목 불러오기
+
+    async function loadRecentFiles() {
+    currentPath = '';
+    document.getElementById('breadcrumbCurrent').textContent = '최근 파일';
+    document.getElementById('breadcrumbBack').style.display = 'none';
+    document.getElementById('breadcrumbSep').style.display = 'none';
+
+    const list = document.getElementById('fileList');
+    document.querySelector('.file-header').style.display = currentView === 'tile' ? 'none' : 'grid';
+
+    try {
+        const res = await fetchWithAuth(API + '/files/recent');
+        if (!res) return;
+        const data = await res.json();
+
+        if (!data.files || data.files.length === 0) {
+            list.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🕐</div>
+                    <div class="empty-text">최근 파일이 없어요</div>
+                </div>`;
+            return;
+        }
+
+        if (currentView === 'tile') {
+            list.innerHTML = `<div class="file-grid">${data.files.map(item => {
+                const isPreviewable = ['jpg','jpeg','png','gif','webp','svg','pdf'].includes(item.name.split('.').pop().toLowerCase());
+                const clickAction = isPreviewable ? `onclick="previewFile(this)" data-name="${item.path}"` : '';
+                return `
+                    <div class="file-grid-item" ${clickAction}>
+                        <div class="file-grid-icon ${getIconClass(item)}">${getIconHtml(item)}</div>
+                        <div class="file-grid-name">${item.name}</div>
+                        <div class="file-grid-actions">
+                            <div class="action-btn" onclick="event.stopPropagation(); openContextMenu(event, this)" data-name="${item.path}" data-type="${item.type}" title="더보기">···</div>
+                        </div>
+                    </div>
+                `;
+            }).join('')}</div>`;
+        } else {
+            list.innerHTML = data.files.map(item => {
+                const isPreviewable = ['jpg','jpeg','png','gif','webp','svg','pdf'].includes(item.name.split('.').pop().toLowerCase());
+                const rowOnclick = isPreviewable ? `onclick="previewFile(this)" data-name="${item.path}"` : '';
+                return `
+                    <div class="file-row" ${rowOnclick} style="${isPreviewable ? 'cursor:pointer' : ''}">
+                        <div class="file-name">
+                            <div class="file-icon ${getIconClass(item)}">${getIconHtml(item)}</div>
+                            <span>${item.path}</span>
+                        </div>
+                        <div class="file-meta">${formatSize(item.size_mb)}</div>
+                        <div class="file-meta">${formatDate(item.modified)}</div>
+                        <div class="file-actions">
+                            <div class="action-btn" onclick="event.stopPropagation(); openContextMenu(event, this)" data-name="${item.path}" data-type="${item.type}" title="더보기">···</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    } catch (e) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-text">불러오기 실패</div></div>`;
+    }
+}
+
 
 </script>
 
