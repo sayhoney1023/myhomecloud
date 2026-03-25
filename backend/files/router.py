@@ -153,3 +153,26 @@ def move_file(
     shutil.move(old_path, new_path)
     return {"message": f"{req.dest_path}로 이동 완료!"}
 
+@router.get("/recent")
+def get_recent_files(
+    limit: int = 20,
+    current_user: User = Depends(get_current_user)
+):
+    user_dir = get_user_dir(current_user.username)
+    files = []
+    
+    for root, dirs, filenames in os.walk(user_dir):
+        for filename in filenames:
+            filepath = os.path.join(root, filename)
+            stat = os.stat(filepath)
+            rel_path = os.path.relpath(filepath, user_dir)
+            files.append({
+                "name": filename,
+                "path": rel_path,
+                "type": "file",
+                "size_mb": round(stat.st_size / (1024**2), 2),
+                "modified": stat.st_mtime
+            })
+    
+    files.sort(key=lambda x: x['modified'], reverse=True)
+    return {"files": files[:limit]}
