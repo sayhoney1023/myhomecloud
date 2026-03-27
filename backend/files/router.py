@@ -26,8 +26,8 @@ def list_files(
     user_dir = os.path.join(get_user_dir(current_user.username), path)
     files = []
     for filename in os.listdir(user_dir):
-        if filename == '.trash':  #휴지통 파일은 안보이게 설정
-        continue
+        if filename == '.trash': 
+            continue #휴지통 파일은 안보이게 설정
         filepath = os.path.join(user_dir, filename)
         stat = os.stat(filepath)
         files.append({
