@@ -153,6 +153,8 @@ def move_file(
     shutil.move(old_path, new_path)
     return {"message": f"{req.dest_path}로 이동 완료!"}
 
+#최근 항목 불러오기
+
 @router.get("/recent")
 def get_recent_files(
     limit: int = 20,
@@ -176,3 +178,88 @@ def get_recent_files(
     
     files.sort(key=lambda x: x['modified'], reverse=True)
     return {"files": files[:limit]}
+
+#휴지통 기능
+
+TRASH_DIR = ".trash"
+
+@router.delete("/{filename:path}")
+def delete_file(
+    filename: str,
+    current_user: User = Depends(get_current_user)
+):
+    user_dir = get_user_dir(current_user.username)
+    file_path = os.path.join(user_dir, filename)
+    
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
+    
+    # 휴지통으로 이동
+    trash_dir = os.path.join(user_dir, TRASH_DIR)
+    os.makedirs(trash_dir, exist_ok=True)
+    trash_path = os.path.join(trash_dir, os.path.basename(file_path))
+    
+    # 같은 이름 있으면 타임스탬프 추가
+    if os.path.exists(trash_path):
+        import time
+        base, ext = os.path.splitext(os.path.basename(file_path))
+        trash_path = os.path.join(trash_dir, f"{base}_{int(time.time())}{ext}")
+    
+    shutil.move(file_path, trash_path)
+    return {"message": f"{filename} 휴지통으로 이동했습니다"}
+
+
+@router.get("/trash")
+def get_trash(current_user: User = Depends(get_current_user)):
+    user_dir = get_user_dir(current_user.username)
+    trash_dir = os.path.join(user_dir, TRASH_DIR)
+    os.makedirs(trash_dir, exist_ok=True)
+    
+    items = []
+    for name in os.listdir(trash_dir):
+        filepath = os.path.join(trash_dir, name)
+        stat = os.stat(filepath)
+        items.append({
+            "name": name,
+            "type": "folder" if os.path.isdir(filepath) else "file",
+            "size_mb": round(stat.st_size / (1024**2), 2) if os.path.isfile(filepath) else None,
+            "modified": stat.st_mtime
+        })
+    return {"files": items}
+
+
+@router.post("/trash/restore/{filename}")
+def restore_file(
+    filename: str,
+    current_user: User = Depends(get_current_user)
+):
+    user_dir = get_user_dir(current_user.username)
+    trash_path = os.path.join(user_dir, TRASH_DIR, filename)
+    restore_path = os.path.join(user_dir, filename)
+    
+    if not os.path.exists(trash_path):
+        raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
+    
+    if os.path.exists(restore_path):
+        raise HTTPException(status_code=400, detail="같은 이름의 파일이 이미 있습니다")
+    
+    shutil.move(trash_path, restore_path)
+    return {"message": f"{filename} 복원 완료!"}
+
+
+@router.delete("/trash/{filename}")
+def delete_permanently(
+    filename: str,
+    current_user: User = Depends(get_current_user)
+):
+    user_dir = get_user_dir(current_user.username)
+    trash_path = os.path.join(user_dir, TRASH_DIR, filename)
+    
+    if not os.path.exists(trash_path):
+        raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
+    
+    if os.path.isdir(trash_path):
+        shutil.rmtree(trash_path)
+    else:
+        os.remove(trash_path)
+    return {"message": f"{filename} 영구 삭제 완료!"}
