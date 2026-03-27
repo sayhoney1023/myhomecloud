@@ -631,6 +631,15 @@
 
         .context-menu-item:hover { background: rgba(255,255,255,0.08); color: #fff; }
         .context-menu-item.danger:hover { background: rgba(239,68,68,0.15); color: #f87171; }
+        /* 드래그 앤 드롭 파일 이동 */
+        .file-row.drag-over {
+        background: rgba(59,130,246,0.15);
+        border: 1px dashed rgba(59,130,246,0.5);
+}
+
+        .file-row[draggable="true"] {
+        cursor: grab;
+}
     </style>
 </head>
 <body>
@@ -819,6 +828,7 @@
     let moveTarget = '';
     let moveDestPath = '';
     let ctxTarget = { name: '', type: '' };
+    let dragTarget = '';
 
     function getToken() {
         return localStorage.getItem('token');
@@ -919,8 +929,15 @@
         : '';
         
     return `
-        <div class="file-row" ${rowOnclick} style="${item.type === 'folder' || isPreviewable ? 'cursor:pointer' : ''}">
-            <div class="file-name">
+        <div class="file-row" ${rowOnclick}
+            draggable="true"
+            ondragstart="dragStart(event, '${fullPath}')"
+            ondragover="${item.type === 'folder' ? `event.preventDefault(); this.classList.add('drag-over')` : ''}"
+            ondragleave="${item.type === 'folder' ? `this.classList.remove('drag-over')` : ''}"
+            ondrop="${item.type === 'folder' ? `dropOnFolder(event, '${fullPath}')` : ''}"
+            style="${item.type === 'folder' || isPreviewable ? 'cursor:pointer' : ''}">
+            style="${item.type === 'folder' || isPreviewable ? 'cursor:pointer' : ''}">
+        <div class="file-name">
                 <div class="file-icon ${getIconClass(item)}">${getIconHtml(item)}</div>
                 <span>${item.name}</span>
             </div>
@@ -1470,6 +1487,35 @@ async function submitMove() {
     });
     if (res && res.ok) loadTrash();
     else alert('영구 삭제 실패');
+}
+    function dragStart(e, fullPath) {
+    dragTarget = fullPath;
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+    //파일 드래그인 드롭 이동
+
+    async function dropOnFolder(e, folderPath) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+    
+    if (!dragTarget || dragTarget === folderPath) return;
+    
+    try {
+        const res = await fetchWithAuth(API + '/files/move/' + encodeURIComponent(dragTarget), {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dest_path: folderPath })
+        });
+        if (res && res.ok) {
+            loadFiles(currentPath);
+        } else {
+            const data = await res.json();
+            alert(data.detail || '이동 실패');
+        }
+    } catch (e) {
+        alert('이동 실패');
+    }
 }
 
 
