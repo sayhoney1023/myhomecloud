@@ -929,15 +929,12 @@
         : '';
         
     return `
-        <div class="file-row" ${rowOnclick}
-            draggable="true"
-            ondragstart="dragStart(event, '${fullPath}')"
-            ondragover="${item.type === 'folder' ? `event.preventDefault(); this.classList.add('drag-over')` : ''}"
-            ondragleave="${item.type === 'folder' ? `this.classList.remove('drag-over')` : ''}"
-            ondrop="${item.type === 'folder' ? `dropOnFolder(event, '${fullPath}')` : ''}"
-            style="${item.type === 'folder' || isPreviewable ? 'cursor:pointer' : ''}">
-            style="${item.type === 'folder' || isPreviewable ? 'cursor:pointer' : ''}">
-        <div class="file-name">
+            <div class="file-row" ${rowOnclick} 
+                draggable="true"
+                ondragstart="dragStart(event, '${fullPath}')"
+                ${item.type === 'folder' ? `ondragover="event.preventDefault(); this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="dropOnFolder(event, '${fullPath}')"` : ''}
+                style="${item.type === 'folder' || isPreviewable ? 'cursor:pointer' : ''}">
+            <div class="file-name">
                 <div class="file-icon ${getIconClass(item)}">${getIconHtml(item)}</div>
                 <span>${item.name}</span>
             </div>
