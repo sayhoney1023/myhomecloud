@@ -70,26 +70,6 @@ def download_file(
     
     return FileResponse(path=file_path, filename=filename)
 
-#삭제 로직 
-
-@router.delete("/{filename:path}")
-def delete_file(
-    filename: str,
-    current_user: User = Depends(get_current_user)
-):
-    user_dir = get_user_dir(current_user.username)
-    file_path = os.path.join(user_dir, filename)
-    
-    if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
-    
-    if os.path.isdir(file_path):
-        shutil.rmtree(file_path)  # 폴더 삭제
-    else:
-        os.remove(file_path)  # 파일 삭제
-    
-    return {"message": f"{filename} 삭제 완료!"}
-
 #폴더 생성 
 
 @router.post("/mkdir")
@@ -181,7 +161,7 @@ def get_recent_files(
     files.sort(key=lambda x: x['modified'], reverse=True)
     return {"files": files[:limit]}
 
-#휴지통 기능
+#휴지통 기능 + 삭제 로직
 
 TRASH_DIR = ".trash"
 
