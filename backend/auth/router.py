@@ -1,9 +1,14 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from database.database import get_db
 from models.user import User
 from auth.utils import hash_password, verify_password, create_access_token, get_current_user
+from core.config import ALLOW_REGISTRATION
+
+limiter = Limiter(key_func=get_remote_address)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -21,6 +26,12 @@ class PasswordChangeRequest(BaseModel):
 
 @router.post("/register")
 def register(req: RegisterRequest, db: Session = Depends(get_db)):
+    if not ALLOW_REGISTRATION:
+        raise HTTPException(status_code=403, detail="현재 회원가입이 비활성화되어 있습니다")
+
+    if len(req.password) < 8:
+        raise HTTPException(status_code=400, detail="비밀번호는 8자 이상이어야 합니다")
+
     existing_user = db.query(User).filter(User.username == req.username).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="이미 존재하는 아이디입니다")
@@ -35,7 +46,8 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
     return {"message": f"{req.username}님 회원가입 완료!"}
 
 @router.post("/login")
-def login(req: LoginRequest, db: Session = Depends(get_db)):
+@limiter.limit("10/minute")
+def login(request: Request, req: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == req.username).first()
     if not user:
         raise HTTPException(status_code=401, detail="존재하지 않는 아이디입니다")

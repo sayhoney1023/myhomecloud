@@ -11,19 +11,27 @@ router = APIRouter(prefix="/files", tags=["files"])
 
 BASE_DIR = "/nas/files"
 
-# 파일 보기 
-
 def get_user_dir(username: str) -> str:
     user_dir = os.path.join(BASE_DIR, username)
     os.makedirs(user_dir, exist_ok=True)
     return user_dir
+
+def safe_path(user_dir: str, subpath: str) -> str:
+    """경로가 user_dir 밖으로 탈출하지 않도록 검증 (Path Traversal 방어)"""
+    base = os.path.realpath(user_dir)
+    full = os.path.realpath(os.path.join(user_dir, subpath))
+    if full != base and not full.startswith(base + os.sep):
+        raise HTTPException(status_code=403, detail="접근 불가")
+    return full
+
+# 파일 보기
 
 @router.get("/")
 def list_files(
     path: str = "",
     current_user: User = Depends(get_current_user)
 ):
-    user_dir = os.path.join(get_user_dir(current_user.username), path)
+    user_dir = safe_path(get_user_dir(current_user.username), path)
     files = []
     for filename in os.listdir(user_dir):
         if filename == '.trash': 
@@ -46,9 +54,12 @@ def upload_file(
     path: str = "",
     current_user: User = Depends(get_current_user)
 ):
-    user_dir = os.path.join(get_user_dir(current_user.username), path)
+    user_dir = safe_path(get_user_dir(current_user.username), path)
     os.makedirs(user_dir, exist_ok=True)
-    file_path = os.path.join(user_dir, file.filename)
+    safe_filename = os.path.basename(file.filename)
+    if not safe_filename:
+        raise HTTPException(status_code=400, detail="유효하지 않은 파일명")
+    file_path = safe_path(user_dir, safe_filename)
     
     with open(file_path, "wb") as f:
         shutil.copyfileobj(file.file, f)
@@ -63,7 +74,7 @@ def download_file(
     current_user: User = Depends(get_current_user)
 ):
     user_dir = get_user_dir(current_user.username)
-    file_path = os.path.join(user_dir, filename)
+    file_path = safe_path(user_dir, filename)
     
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
@@ -78,7 +89,7 @@ def create_folder(
     current_user: User = Depends(get_current_user)
 ):
     user_dir = get_user_dir(current_user.username)
-    folder_path = os.path.join(user_dir, folder_name)
+    folder_path = safe_path(user_dir, folder_name)
     
     if os.path.exists(folder_path):
         raise HTTPException(status_code=400, detail="이미 존재하는 폴더입니다")
@@ -98,8 +109,9 @@ def rename_file(
     current_user: User = Depends(get_current_user)
 ):
     user_dir = get_user_dir(current_user.username)
-    old_path = os.path.join(user_dir, filename)
-    new_path = os.path.join(os.path.dirname(old_path), req.new_name)
+    old_path = safe_path(user_dir, filename)
+    new_name = os.path.basename(req.new_name)
+    new_path = safe_path(user_dir, os.path.join(os.path.dirname(filename), new_name))
 
     if not os.path.exists(old_path):
         raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
@@ -122,8 +134,8 @@ def move_file(
     current_user: User = Depends(get_current_user)
 ):
     user_dir = get_user_dir(current_user.username)
-    old_path = os.path.join(user_dir, filename)
-    new_path = os.path.join(user_dir, req.dest_path, os.path.basename(filename))
+    old_path = safe_path(user_dir, filename)
+    new_path = safe_path(user_dir, os.path.join(req.dest_path, os.path.basename(filename)))
 
     if not os.path.exists(old_path):
         raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
@@ -171,7 +183,7 @@ def delete_file(
     current_user: User = Depends(get_current_user)
 ):
     user_dir = get_user_dir(current_user.username)
-    file_path = os.path.join(user_dir, filename)
+    file_path = safe_path(user_dir, filename)
     
     if not os.path.exists(file_path):
         raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
@@ -216,8 +228,9 @@ def restore_file(
     current_user: User = Depends(get_current_user)
 ):
     user_dir = get_user_dir(current_user.username)
-    trash_path = os.path.join(user_dir, TRASH_DIR, filename)
-    restore_path = os.path.join(user_dir, filename)
+    trash_dir = os.path.join(user_dir, TRASH_DIR)
+    trash_path = safe_path(trash_dir, os.path.basename(filename))
+    restore_path = safe_path(user_dir, os.path.basename(filename))
     
     if not os.path.exists(trash_path):
         raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")
@@ -235,7 +248,8 @@ def delete_permanently(
     current_user: User = Depends(get_current_user)
 ):
     user_dir = get_user_dir(current_user.username)
-    trash_path = os.path.join(user_dir, TRASH_DIR, filename)
+    trash_dir = os.path.join(user_dir, TRASH_DIR)
+    trash_path = safe_path(trash_dir, os.path.basename(filename))
     
     if not os.path.exists(trash_path):
         raise HTTPException(status_code=404, detail="파일을 찾을 수 없습니다")

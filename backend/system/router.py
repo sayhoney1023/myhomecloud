@@ -10,7 +10,7 @@ router = APIRouter(prefix="/system", tags=["system"])
 def get_status(current_user: User = Depends(get_current_user)):
     # 디스크 (호스트 마운트)
     try:
-        disk = shutil.disk_usage("/host/nas")
+        disk = shutil.disk_usage("/nas")
         disk_percent = round(disk.used / disk.total * 100, 1)
         disk_used_gb = round(disk.used / (1024**3), 1)
         disk_total_gb = round(disk.total / (1024**3), 1)
